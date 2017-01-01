@@ -1,0 +1,10 @@
+-r base.txt
+ipython
+ipdb
+django-nose
+django-extensions
+Werkzeug
+django-debug-toolbar
+coverage
+factory-boy
+
