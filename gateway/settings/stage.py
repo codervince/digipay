@@ -4,7 +4,8 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'gateway.morethansoft.com'
+    # 'gateway.morethansoft.com'
+    '*'
 ]
 
 RAVEN_CONFIG = {
