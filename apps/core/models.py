@@ -4,11 +4,8 @@ from django.db import models
 class BaseManager(models.Manager):
     """ Base Manager for Base model
     """
-    def __init__(self):
-        super(BaseManager, self).__init__()
-
     def get_queryset(self):
-        return BaseQuerySet(model=self.model, using=self._db).filter(trashed=False)
+        return super(BaseManager, self).get_queryset().filter(trashed=False)
 
 
 class BaseModel(models.Model):
