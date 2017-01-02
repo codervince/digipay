@@ -3,9 +3,9 @@ from .base import *
 
 DEBUG = False
 
-# TODO
-# ALLOWED_HOSTS = [
-# ]
+ALLOWED_HOSTS = [
+    'gateway.morethansoft.com'
+]
 
 RAVEN_CONFIG = {
     'dsn': os.environ['DSN'],
