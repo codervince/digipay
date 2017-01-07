@@ -20,10 +20,12 @@ class Transaction(BaseModel):
     email = models.EmailField(null=True)
     project_code = models.CharField(max_length=34, null=True)
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
-    amount_btc = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_btc = models.DecimalField(max_digits=10, decimal_places=2,
+                                     editable=False)
     from_address= models.CharField(max_length=34, null=True)
     to_address = models.CharField(max_length=34, null=True)
-    status = models.IntegerField(choices=STATUS_CHOICES, null=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, null=True,
+                                 editable=False)
 
     def __str__(self):
         return '{0}: {1}'.format(self.from_address, self.to_address)
