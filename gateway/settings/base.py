@@ -39,6 +39,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -135,3 +136,4 @@ MEDIA_URL = '/media/'
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
+SITE_ID = 1
