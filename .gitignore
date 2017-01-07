@@ -76,3 +76,4 @@ sqlite_db
 
 # Frontend folder has its own .gitignore
 !frontend/**
+*.swp
