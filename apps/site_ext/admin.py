@@ -12,7 +12,7 @@ class SiteExtInline(admin.TabularInline):
 
 class SiteAdmin(BaseSiteAdmin):
     list_display = ['domain', 'name', 'token']
-    inlines = [SiteExtInline]
+    # inlines = [SiteExtInline]
 
     def token(self, obj):
         try:
