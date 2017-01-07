@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
@@ -7,6 +8,7 @@ from core.models import BaseModel
 class Transaction(BaseModel):
     """Transactions storing data
     """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     STATUS_UNCONFIRMED = 0
     STATUS_PARTIALLY_CONFIRMED = 1
     STATUS_CONFIRMED = 2
