@@ -1,5 +1,4 @@
 Django
 psycopg2
-django_extensions
 dj-database-url==0.4.1
 raven
