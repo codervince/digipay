@@ -4,8 +4,8 @@ from .models import Project
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'token')
+    list_display = ('name', 'project_code')
     list_filter = ('created_at',)
 
-    def token(self, obj):
-        return obj.token.hex
+    def project_code(self, obj):
+        return obj.code.hex

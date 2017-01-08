@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from core.models import BaseModel
+from projects.models import Project
 
 
 class Transaction(BaseModel):
@@ -20,7 +21,7 @@ class Transaction(BaseModel):
 
     site = models.ForeignKey(Site, null=True)
     email = models.EmailField(null=True)
-    project_code = models.CharField(max_length=34, null=True)
+    project  = models.ForeignKey(Project, null=True)
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
     amount_btc = models.DecimalField(max_digits=10, decimal_places=2,
                                      editable=False)
