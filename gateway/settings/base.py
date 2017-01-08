@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'core',
     'site_ext',
     'payments',
+    'projects',
 ]
 
 MIDDLEWARE = [
