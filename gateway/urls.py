@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf import settings
+from django.views.generic import TemplateView
 from payments.views import HomeView
 from payments.views import TransactionView
 from api.views import TransactionAPIView

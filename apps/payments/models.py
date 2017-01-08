@@ -39,7 +39,7 @@ class Transaction(BaseModel):
     def get_absolute_url(self):
         return reverse('transaction', args=(self.id.hex,))
 
-    def end_date(self):
+    def ends_at(self):
         return self.created_at + datetime.timedelta(minutes=settings.TIMER)
 
     class Meta:

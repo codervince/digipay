@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n tz %}
+{% load i18n %}
 
 {% block title %}
     {% trans "Payment transaction" %}
@@ -91,18 +91,16 @@
 {% endblock %}
 
 {% block js %}
-{% get_current_timezone as TIME_ZONE %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.11/moment-timezone.min.js"></script>
-<script>
-(function() {
-    $(function() {
-        var endDate = moment.tz("{{ transaction.end_time }}", "Europe/Kiev");
-        $('.countdown').countdown(endDate.toDate(), function(event){
-            $(this).text(event.strftime('%M:%S'));
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.11/moment-timezone.min.js"></script>
+    <script>
+    (function() {
+        $(function() {
+            var endDate = moment.tz("{{ transaction.ends_at|date:"Y/m/d H:i" }}", moment.tz.guess());
+            $('.countdown').countdown(endDate.toDate(), function(event){
+                $(this).text(event.strftime('%M:%S'));
+            })
         })
-    })
-})();
+    })();
 </script>
 {% endblock %}
