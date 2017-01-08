@@ -1,4 +1,6 @@
 from django.views.generic import TemplateView
+from django.shortcuts import get_object_or_404
+from django.http import Http404
 from .models import Transaction
 
 
@@ -13,5 +15,8 @@ class TransactionView(TemplateView):
     """
     template_name = 'transaction.html'
 
-    def get_object(self):
-        import ipdb; ipdb.set_trace()
+    def get_context_data(self, **kwargs):
+        kwargs.update({
+            'transaction': get_object_or_404(Transaction, id=kwargs['uuid'])
+        })
+        return super(TransactionView, self).get_context_data(**kwargs)

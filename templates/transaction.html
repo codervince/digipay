@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}
+    {% trans "Payment transaction" %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="container-row row justify-content-center">
+        <div class="col-6 align-self-center">
+            <div class="card animated zoomIn">
+                <div class="card-block card-line text-center">
+                    <h4 class="card-title">{{ transaction.project.name }}</h4>
+                    <div class="card-text">
+                        <a href="{{ transaction.site.domain }}">{{ transaction.site.domain }}</a>
+                    </div>
+                </div>
+                <div class="card-block card-line">
+                    <div class="card-text">
+                        <form class="" action="" method="post">{% csrf_token %}
+                            <div class="form-group row">
+                                <label for="" class="col-4 col-form-label">{% trans "Amount to pay:" %}</label>
+                                <div class="col-8">
+                                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                        <input type="text" name="name" value="{{ transaction.amount_usd }}" class="form-control">
+                                        <div class="input-group-addon">USD</div>
+                                    </div>
+                                    <p class="form-text text-muted text-right">
+                                        {{ transaction.amount_btc|default_if_none:"" }} BTC
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div class="card-text">
+                        <b class="card-title">{% trans "Customer information" %}</b>
+                    </div>
+                </div>
+                <div class="card-block card-line">
+                    <div class="card-text">
+                        <div class="row form-group">
+                            <label for="" class="col-sm-12 col-md-4 col-form-label">{% trans "Email" %}</label>
+                            <div class="col-sm-12 col-md-8">
+                                <input type="text" name="name" value="{{ transaction.email }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="" class="col-sm-12 col-md-4 col-form-label">{% trans "Project code" %}</label>
+                            <div class="col-sm-12 col-md-8">
+                                <input type="text" name="name" value="{{ transaction.project.code.hex }}" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-block card-line">
+                    <div class="card-text">
+                        <div class="row">
+                            <div class="col-12">
+                                {% trans "Send exactly" %} <b>{{ transaction.amount_btc|default_if_none:"" }} BTC</b> to this address:
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="text" name="name" value="{{ transaction.to_address|default_if_none:"" }}" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div class="card-text text-center">
+                        <button type="button" class="btn btn-primary" disabled>{% trans "Make Payment" %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
