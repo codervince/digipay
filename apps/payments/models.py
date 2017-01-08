@@ -1,8 +1,10 @@
 import uuid
+import datetime
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.contrib.sites.models import Site
+from django.utils.translation import ugettext_lazy as _
 from core.models import BaseModel
 from projects.models import Project
 
@@ -22,11 +24,11 @@ class Transaction(BaseModel):
 
     site = models.ForeignKey(Site, null=True)
     email = models.EmailField(null=True)
-    project  = models.ForeignKey(Project, null=True)
+    project = models.ForeignKey(Project, null=True)
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
     amount_btc = models.DecimalField(max_digits=10, decimal_places=2,
                                      editable=False, null=True)
-    from_address= models.CharField(max_length=34, null=True)
+    from_address = models.CharField(max_length=34, null=True)
     to_address = models.CharField(max_length=34, null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, null=True,
                                  editable=False)
@@ -37,7 +39,9 @@ class Transaction(BaseModel):
     def get_absolute_url(self):
         return reverse('transaction', args=(self.id.hex,))
 
-    class Meta:
-       db_table = 'transactions'
-       unique_together = (('project', 'email'),)
+    def end_date(self):
+        return self.created_at + datetime.timedelta(minutes=settings.TIMER)
 
+    class Meta:
+        db_table = 'transactions'
+        unique_together = (('project', 'email'),)

@@ -18,14 +18,10 @@ NOSE_ARGS = [
     '--with-coverage',
     '--cover-html',
     '--cover-erase',
-    '--cover-package=core,payments',
+    '--cover-package=core,payments,site_ext,projects',
 ]
 
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'mailtrap.io')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER','1665e6379817b4fa')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD','2f1a896c9f2e6f')
-EMAIL_PORT = os.environ.get('EMAIL_PORT','2525')
-
-SITE_DOMAIN = 'http://localhost:8000'
-
-
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '1665e6379817b4fa')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '2f1a896c9f2e6f')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', '2525')

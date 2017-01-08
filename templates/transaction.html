@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n %}
+{% load i18n tz %}
 
 {% block title %}
     {% trans "Payment transaction" %}
@@ -11,36 +11,45 @@
     <div class="container-row row justify-content-center">
         <div class="col-6 align-self-center">
             <div class="card animated zoomIn">
-                <div class="card-block card-line text-center">
+                <div class="card-block card-line text-center" style="background-color:aliceblue;border-top-left-radius:3px;border-top-right-radius:3px">
                     <h4 class="card-title">{{ transaction.project.name }}</h4>
                     <div class="card-text">
                         <a href="{{ transaction.site.domain }}">{{ transaction.site.domain }}</a>
                     </div>
                 </div>
-                <div class="card-block card-line">
+                <div class="card-block card-line" style="padding-top:10px;padding-bottom:10px">
+                    <div class="card-text text-center countdown"></div>
+                </div>
+                <div class="card-block card-line" style="padding-top:10px;padding-bottom:0">
                     <div class="card-text">
                         <form class="" action="" method="post">{% csrf_token %}
-                            <div class="form-group row">
+                            <div class="form-group row" style="padding-top:10px;padding-bottom:0;margin:0">
                                 <label for="" class="col-4 col-form-label">{% trans "Amount to pay:" %}</label>
                                 <div class="col-8">
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                                         <input type="text" name="name" value="{{ transaction.amount_usd }}" class="form-control">
                                         <div class="input-group-addon">USD</div>
                                     </div>
-                                    <p class="form-text text-muted text-right">
-                                        {{ transaction.amount_btc|default_if_none:"" }} BTC
-                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group row" style="padding-top:10px;padding-bottom:10px;margin:0">
+                                <label for="" class="col-4 col-form-label"></label>
+                                <div class="col-8">
+                                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                        <input type="text" name="name" value="{{ transaction.amount_usd }}" class="form-control" disabled>
+                                        <div class="input-group-addon">BTC</div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div class="card-block">
+                <div class="card-block" style="padding-top:10px;padding-bottom:0">
                     <div class="card-text">
                         <b class="card-title">{% trans "Customer information" %}</b>
                     </div>
                 </div>
-                <div class="card-block card-line">
+                <div class="card-block card-line" style="padding-top:10px;padding-bottom:0">
                     <div class="card-text">
                         <div class="row form-group">
                             <label for="" class="col-sm-12 col-md-4 col-form-label">{% trans "Email" %}</label>
@@ -70,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-block">
+                <div class="card-block" style="padding-top:10px;padding-bottom:10px">
                     <div class="card-text text-center">
                         <button type="button" class="btn btn-primary" disabled>{% trans "Make Payment" %}</button>
                     </div>
@@ -79,4 +88,21 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block js %}
+{% get_current_timezone as TIME_ZONE %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.11/moment-timezone.min.js"></script>
+<script>
+(function() {
+    $(function() {
+        var endDate = moment.tz("{{ transaction.end_time }}", "Europe/Kiev");
+        $('.countdown').countdown(endDate.toDate(), function(event){
+            $(this).text(event.strftime('%M:%S'));
+
+        })
+    })
+})();
+</script>
 {% endblock %}

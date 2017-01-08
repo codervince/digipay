@@ -140,3 +140,6 @@ LOCALE_PATHS = (
 )
 SITE_ID = 1
 ADMIN_SITE_HEADER = 'Payment Gateway'
+
+# Minutes
+TIMER = 15 
