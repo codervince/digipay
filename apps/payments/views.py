@@ -7,5 +7,11 @@ class HomeView(TemplateView):
     """
     template_name = 'home.html'
 
-    # def post(self, request, *args, **kwargs):
 
+class TransactionView(TemplateView):
+    """Page to handle transaction payments
+    """
+    template_name = 'transaction.html'
+
+    def get_object(self):
+        import ipdb; ipdb.set_trace()

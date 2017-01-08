@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from core.models import BaseModel
@@ -24,7 +25,7 @@ class Transaction(BaseModel):
     project  = models.ForeignKey(Project, null=True)
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
     amount_btc = models.DecimalField(max_digits=10, decimal_places=2,
-                                     editable=False)
+                                     editable=False, null=True)
     from_address= models.CharField(max_length=34, null=True)
     to_address = models.CharField(max_length=34, null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, null=True,
@@ -32,6 +33,9 @@ class Transaction(BaseModel):
 
     def __str__(self):
         return '{0}: {1}'.format(self.from_address, self.to_address)
+
+    def get_absolute_url(self):
+        return reverse('transaction', args=(self.id.hex,))
 
     class Meta:
        db_table = 'transactions'
