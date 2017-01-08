@@ -6,6 +6,7 @@ from .models import Project
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'project_code')
     list_filter = ('created_at',)
+    fields = ('name',)
 
     def project_code(self, obj):
         return obj.code.hex
