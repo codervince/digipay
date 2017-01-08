@@ -39,4 +39,5 @@ class Transaction(BaseModel):
 
     class Meta:
        db_table = 'transactions'
+       unique_together = (('project', 'email'),)
 
