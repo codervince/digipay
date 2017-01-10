@@ -27,7 +27,7 @@
                                 <label for="" class="col-4 col-form-label">{% trans "Amount to pay:" %}</label>
                                 <div class="col-8">
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                        <input type="text" name="name" value="{{ transaction.amount_usd }}" class="form-control">
+                                        <input type="text" name="name" value="{{ transaction.amount_usd }}" class="form-control usd">
                                         <div class="input-group-addon">USD</div>
                                     </div>
                                 </div>
@@ -36,7 +36,7 @@
                                 <label for="" class="col-4 col-form-label"></label>
                                 <div class="col-8">
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                        <input type="text" name="name" value="{{ transaction.amount_usd }}" class="form-control" disabled>
+                                        <input type="text" name="name" value="{{ transaction.amount_btc }}" class="form-control btc" disabled>
                                         <div class="input-group-addon">BTC</div>
                                     </div>
                                 </div>
@@ -69,7 +69,7 @@
                     <div class="card-text">
                         <div class="row">
                             <div class="col-12">
-                                {% trans "Send exactly" %} <b>{{ transaction.amount_btc|default_if_none:"" }} BTC</b> to this address:
+                                {% trans "Send exactly" %} <b><span class="btc-exact">{{ transaction.amount_btc|default_if_none:"" }}</span> BTC</b> to this address:
                             </div>
                         </div>
                         <div class="row">
@@ -99,6 +99,31 @@
             var endDate = moment.tz("{{ transaction.ends_at|date:"Y/m/d H:i" }}", moment.tz.guess());
             $('.countdown').countdown(endDate.toDate(), function(event){
                 $(this).text(event.strftime('%M:%S'));
+            })
+
+            var btc = $('.btc')
+            var btcExact = $('.btc-exact')
+            var usd = $('.usd')
+
+            var rate = function() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '{% url 'exchange_api' %}', true);
+
+                request.onload = function() {
+                  if (this.status >= 200 && this.status < 400) {
+                    var data = JSON.parse(this.response);
+                    btc.val(usd.val()/data.rate)
+                    btcExact.html(usd.val()/data.rate)
+                  }
+                };
+
+                request.send()
+            }
+
+            rate()
+            usd.on('keyup', function() {
+                btc.val(usd.val()/rate())
+                btcExact.val(usd.val()/rate())
             })
         })
     })();

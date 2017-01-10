@@ -1,7 +1,10 @@
 import json
+import moneywagon
+from django.core.cache import cache
 from django.views import View
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
+from django.utils.cache import get_cache_key
 from core.views import CSRFExemptMixin
 from payments.models import Transaction
 from site_ext.models import SiteExt
@@ -40,7 +43,6 @@ class TransactionAPIView(CSRFExemptMixin, View):
         }
         error = lambda x: errors['errors'].append(x)
 
-        print(data)
         if not data.get('email'):
             error(_('email is required'))
 
@@ -91,3 +93,24 @@ class TransactionAPIView(CSRFExemptMixin, View):
             )
             return JsonResponse({"url": url})
         return JsonResponse(errors)
+
+
+class ExchangeRateAPIView(View):
+    """Get the latest exchange rate btc <-> usd
+
+    GET request:
+    /api/v1/exchange/
+
+    Response:
+    {
+        "rate": 905.99
+    }
+    """
+    def get(self, request, *args, **kwargs):
+        if not cache.has_key('rate'):
+            cache.set('rate', moneywagon.get_current_price('btc', 'usd')[0])
+        rate = cache.get('rate')
+
+        return JsonResponse({
+            "rate": rate
+        })
