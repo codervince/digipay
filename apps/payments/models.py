@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 from core.models import BaseModel
-from projects.models import Project
 
 
 class Transaction(BaseModel):
@@ -24,12 +23,13 @@ class Transaction(BaseModel):
 
     site = models.ForeignKey(Site, null=True)
     email = models.EmailField(null=True)
-    project = models.ForeignKey(Project, null=True)
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
     amount_btc = models.DecimalField(max_digits=10, decimal_places=2,
                                      editable=False, null=True)
     from_address = models.CharField(max_length=34, null=True)
     to_address = models.CharField(max_length=34, null=True)
+    project_code = models.UUIDField(default=uuid.uuid4, editable=False,
+                                    null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, null=True,
                                  editable=False)
 
@@ -44,4 +44,4 @@ class Transaction(BaseModel):
 
     class Meta:
         db_table = 'transactions'
-        unique_together = (('project', 'email'),)
+        unique_together = (('project_code', 'email'),)

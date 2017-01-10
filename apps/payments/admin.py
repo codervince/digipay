@@ -8,8 +8,6 @@ class TransactionAdmin(admin.ModelAdmin):
                     'amount_btc', 'from_address', 'to_address',)
     list_filter = ('status', 'created_at', 'updated_at')
     fields = (
-        'site', 'project', 'email', 'from_address', 'to_address', 'amount_usd'
+        'site', 'project_code', 'email', 'from_address', 'to_address',
+        'amount_usd'
     )
-
-    def project_code(self, obj):
-        return obj.project.code.hex

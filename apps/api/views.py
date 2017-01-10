@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from core.views import CSRFExemptMixin
 from payments.models import Transaction
 from site_ext.models import SiteExt
-from projects.models import Project
 
 
 class TransactionAPIView(CSRFExemptMixin, View):
@@ -37,13 +36,12 @@ class TransactionAPIView(CSRFExemptMixin, View):
         """
         data = self.get_data()
         site = SiteExt.objects.get(token=data['token']).site
-        project = Project.objects.get(code=data['project_code'])
 
         transaction = Transaction(
             status=Transaction.STATUS_UNCONFIRMED,
             site=site,
             email=data['email'],
-            project=project,
+            project_code=data['project_code'],
             amount_usd=data['amount_usd'],
         )
         transaction.save()
