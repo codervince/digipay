@@ -128,6 +128,7 @@ class CallbackAPIView(CSRFExemptMixin, View):
         SATOSHI = decimal.Decimal("0.00000001")
         transaction.amount_paid += SATOSHI * data['value']
         transaction.save()
+        # TODO Send callback notification to transaction.site
         return HttpResponse()
 
 

@@ -70,7 +70,6 @@ class TransactionView(TemplateView):
         transaction = form.save()
         transaction.payment_sent = True
         transaction.save()
-        # TODO integration with blockonomics happens here
         return HttpResponseRedirect(
             reverse('payment_sent', args=(transaction.id.hex,)))
 
@@ -89,7 +88,3 @@ class PaymentSentView(TemplateView):
             'transaction': self.get_object(),
         })
         return super(PaymentSentView, self).get_context_data(**kwargs)
-
-
-# TODO callback endpoint
-# TODO receipt sending via celery
