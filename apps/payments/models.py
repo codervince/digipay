@@ -1,5 +1,6 @@
 import uuid
 import datetime
+import moneywagon
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -25,7 +26,7 @@ class Transaction(BaseModel):
     site = models.ForeignKey(Site, null=True)
     email = models.EmailField(null=True)
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
-    amount_btc = models.DecimalField(max_digits=10, decimal_places=2,
+    amount_btc = models.DecimalField(max_digits=18, decimal_places=8,
                                      editable=False, null=True)
     to_address = models.CharField(max_length=34, null=True)
     project_code = models.UUIDField(default=uuid.uuid4, editable=False,
@@ -35,6 +36,20 @@ class Transaction(BaseModel):
 
     def __str__(self):
         return '{0}'.format(self.id.hex)
+
+    def get_rate(self):
+        if not cache.has_key('rate'):
+            try:
+                current_price = moneywagon.get_current_price('btc', 'usd')[0]
+            except:
+                current_price = moneywagon.get_current_price('btc', 'usd')
+            cache.set('rate', current_price)
+        return cache.get('rate')
+
+    def save(self):
+        if not self.amount_btc:
+            self.amount_btc = round(self.amount_usd/self.get_rate(), 8)
+        return super(Transaction, self).save()
 
     def get_absolute_url(self):
         return reverse('transaction', args=(self.id.hex,))
