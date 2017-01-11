@@ -104,6 +104,7 @@
             var btc = $('.btc')
             var btcExact = $('.btc-exact')
             var usd = $('.usd')
+            var DECIMAL_PLACES = 6
 
             var rate = function() {
                 var request = new XMLHttpRequest();
@@ -112,8 +113,9 @@
                 request.onload = function() {
                   if (this.status >= 200 && this.status < 400) {
                     var data = JSON.parse(this.response);
-                    btc.val(usd.val()/data.rate)
-                    btcExact.html(usd.val()/data.rate)
+                    var rate = usd.val()/rate()
+                    btc.val(rate.toFixed(DECIMAL_PLACES))
+                    btcExact.val(rate.toFixed(DECIMAL_PLACES))
                   }
                 };
 
@@ -123,8 +125,9 @@
             // rates update
             rate()
             usd.on('keyup', function() {
-                btc.val(usd.val()/rate())
-                btcExact.val(usd.val()/rate())
+                var rate = usd.val()/rate()
+                btc.val(rate.toFixed(DECIMAL_PLACES))
+                btcExact.val(rate.toFixed(DECIMAL_PLACES))
             })
 
             // payment button enabled
