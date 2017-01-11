@@ -1,6 +1,7 @@
 import uuid
 import datetime
 import moneywagon
+from django.core.cache import cache
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.conf import settings
