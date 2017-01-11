@@ -1,5 +1,6 @@
 import uuid
 import datetime
+import decimal
 import moneywagon
 from django.core.cache import cache
 from django.db import models
@@ -45,11 +46,12 @@ class Transaction(BaseModel):
             except:
                 current_price = moneywagon.get_current_price('btc', 'usd')
             cache.set('rate', current_price)
-        return cache.get('rate')
+        return decimal.Decimal(cache.get('rate'))
 
     def save(self):
         if not self.amount_btc:
-            self.amount_btc = round(self.amount_usd/self.get_rate(), 8)
+            self.amount_btc = round(
+                decimal.Decimal(self.amount_usd)/self.get_rate(), 8)
         return super(Transaction, self).save()
 
     def get_absolute_url(self):
