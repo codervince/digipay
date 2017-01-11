@@ -73,7 +73,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <input type="text" name="{{ form.to_address.html_name }}" value="{{ transaction.to_address|default_if_none:"" }}" class="form-control">
+                                <input type="text" name="{{ form.to_address.html_name }}" value="{{ transaction.to_address|default_if_none:"" }}" class="form-control" disabled>
                             </div>
                         </div>
                     </div>

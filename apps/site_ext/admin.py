@@ -4,15 +4,19 @@ from django.contrib.sites.models import Site
 from .models import SiteExt
 
 
-class SiteExtInline(admin.TabularInline):
+class SiteExtInline(admin.StackedInline):
     """Extend default site admin with site extension
     """
     model = SiteExt
+    fields = ('api_key',)
 
 
 class SiteAdmin(BaseSiteAdmin):
-    list_display = ['domain', 'name', 'token']
-    # inlines = [SiteExtInline]
+    list_display = ['domain', 'name', 'token', 'api_key']
+    inlines = [SiteExtInline]
+
+    def api_key(self, obj):
+        return obj.site_ext.api_key
 
     def token(self, obj):
         try:

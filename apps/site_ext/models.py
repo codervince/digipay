@@ -10,6 +10,7 @@ class SiteExt(BaseModel):
     """
     site = models.OneToOneField(Site, related_name='site_ext', null=True)
     token = models.UUIDField(default=uuid.uuid4, editable=False, null=True)
+    api_key = models.CharField(max_length=255, null=True)
 
 
 def create_ext(sender, instance, created, **kwargs):

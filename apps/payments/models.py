@@ -2,6 +2,7 @@ import uuid
 import datetime
 import decimal
 import moneywagon
+import requests
 from django.core.cache import cache
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -52,6 +53,13 @@ class Transaction(BaseModel):
         if not self.amount_btc:
             self.amount_btc = round(
                 decimal.Decimal(self.amount_usd)/self.get_rate(), 8)
+
+        if not self.to_address:
+            url = 'https://www.blockonomics.co/api/new_address';
+            api_key = self.site.site_ext.api_key
+            headers = {'Authorization': "Bearer " + api_key}
+            r = requests.post(url, headers=headers)
+            self.to_address = r.json()['address']
         return super(Transaction, self).save()
 
     def get_absolute_url(self):
