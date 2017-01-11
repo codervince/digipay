@@ -27,7 +27,6 @@ class Transaction(BaseModel):
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
     amount_btc = models.DecimalField(max_digits=10, decimal_places=2,
                                      editable=False, null=True)
-    from_address = models.CharField(max_length=34, null=True)
     to_address = models.CharField(max_length=34, null=True)
     project_code = models.UUIDField(default=uuid.uuid4, editable=False,
                                     null=True)
@@ -35,7 +34,7 @@ class Transaction(BaseModel):
                                  editable=False)
 
     def __str__(self):
-        return '{0}: {1}'.format(self.from_address, self.to_address)
+        return '{0}'.format(self.id.hex)
 
     def get_absolute_url(self):
         return reverse('transaction', args=(self.id.hex,))

@@ -68,16 +68,6 @@
                     <div class="card-text">
                         <div class="row">
                             <div class="col-12">
-                                {% trans "Send from:" %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <input type="text" name="{{ form.from_address.html_name }}" value="{{ transaction.from_address|default_if_none:"" }}" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
                                 {% trans "Send exactly" %} <b><span class="btc-exact">{{ transaction.amount_btc|default_if_none:"" }}</span> BTC</b> to this address:
                             </div>
                         </div>
@@ -86,11 +76,6 @@
                                 <input type="text" name="{{ form.to_address.html_name }}" value="{{ transaction.to_address|default_if_none:"" }}" class="form-control">
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="card-block" style="padding-top:10px;padding-bottom:10px">
-                    <div class="card-text text-center">
-                        {{ form.errors }}
                     </div>
                 </div>
                 <div class="card-block" style="padding-top:10px;padding-bottom:10px">
