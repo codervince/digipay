@@ -4,3 +4,4 @@ dj-database-url==0.4.1
 raven==5.32.0
 moneywagon==1.11.7
 django-redis==4.7.0
+requests==2.12.4
