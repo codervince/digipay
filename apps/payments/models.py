@@ -12,10 +12,30 @@ from django.utils.translation import ugettext_lazy as _
 from core.models import BaseModel
 
 
+class Payment(BaseModel):
+    """Storing payments
+    """
+    STATUS_UNCONFIRMED = 0
+    STATUS_PARTIALLY_CONFIRMED = 1
+    STATUS_CONFIRMED = 2
+    STATUS_CHOICES = (
+        (STATUS_UNCONFIRMED, _('Unconfirmed')),
+        (STATUS_PARTIALLY_CONFIRMED, _('Partially Confirmed')),
+        (STATUS_CONFIRMED, _('Confirmed')),
+    )
+    txid = models.CharField(max_length=255, null=True)
+    transaction = models.ForeignKey('Transaction', null=True)
+    amount_paid = models.DecimalField(max_digits=18, decimal_places=8,
+                                      null=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, null=True,
+                                 editable=False)
+
+
 class Transaction(BaseModel):
     """Transactions storing data
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    txid = models.CharField(max_length=255, blank=True, null=True)
     STATUS_UNCONFIRMED = 0
     STATUS_PARTIALLY_CONFIRMED = 1
     STATUS_CONFIRMED = 2
@@ -31,6 +51,9 @@ class Transaction(BaseModel):
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)
     amount_btc = models.DecimalField(max_digits=18, decimal_places=8,
                                      editable=False, null=True)
+    amount_paid = models.DecimalField(max_digits=18, decimal_places=8,
+                                      default=decimal.Decimal('0'),
+                                      null=True)
     to_address = models.CharField(max_length=34, null=True)
     project_code = models.UUIDField(default=uuid.uuid4, editable=False,
                                     null=True)

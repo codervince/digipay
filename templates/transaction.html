@@ -10,10 +10,8 @@
 <div class="container">
     <div class="container-row row justify-content-center">
         <div class="col-6 align-self-center">
-            <form action="" method="post">{% csrf_token %}
             <div class="card animated zoomIn">
                 <div class="card-block card-line text-center" style="background-color:aliceblue;border-top-left-radius:3px;border-top-right-radius:3px">
-                    {# <h4 class="card-title">{{ transaction.project.name }}</h4>#}
                     <div class="card-text">
                         <a href="{{ transaction.site.domain }}">{{ transaction.site.domain }}</a>
                     </div>
@@ -78,13 +76,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-block" style="padding-top:10px;padding-bottom:10px">
+                <div class="card-block" style="padding-top:10px;padding-bottom:10px;border-bottom-left-radius:3px;border-bottom-right-radius:3px;background-color:aliceblue">
                     <div class="card-text text-center">
-                        <button type="submit" class="btn btn-success payment-button" disabled>{% trans "Make Payment" %}</button>
+                        {% trans "Awaiting Payment" %}
                     </div>
                 </div>
             </div>
-            </form>
         </div>
     </div>
 </div>

@@ -1,13 +1,17 @@
+import uuid
+import decimal
 import json
 import moneywagon
 from django.core.cache import cache
 from django.views import View
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from django.utils.cache import get_cache_key
 from core.views import CSRFExemptMixin
 from payments.models import Transaction
 from site_ext.models import SiteExt
+from .forms import CallbackForm
 
 
 class TransactionAPIView(CSRFExemptMixin, View):
@@ -93,6 +97,38 @@ class TransactionAPIView(CSRFExemptMixin, View):
             )
             return JsonResponse({"url": url})
         return JsonResponse(errors)
+
+
+class CallbackAPIView(CSRFExemptMixin, View):
+    """Receive notification from blockonomics on transaction success
+    """
+    def get_form(self):
+        return CallbackForm(data=self.request.GET or None)
+
+    def get(self, request, *args, **kwargs):
+        """Support for https://www.blockonomics.co/views/api.html#httpcallback
+        """
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        return HttpResponse(status_code=400)
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        if data['secret'] != '45c75bd587ab4a5b94163c7c741c1dec':
+            return HttpResponse(status_code=400)
+
+        try:
+            transaction = Transaction.objects.get(to_address=data['addr'])
+        except Transaction.DoesNotExist:
+            return HttpResponse(status_code=400)
+
+        transaction.status = data['status']
+        transaction.txid = data['txid']
+        SATOSHI = decimal.Decimal("0.00000001")
+        transaction.amount_paid += SATOSHI * data['value']
+        transaction.save()
+        return HttpResponse()
 
 
 class ExchangeRateAPIView(View):

@@ -6,6 +6,7 @@ from payments.views import HomeView
 from payments.views import TransactionView
 from payments.views import PaymentSentView
 from api.views import TransactionAPIView
+from api.views import CallbackAPIView
 from api.views import ExchangeRateAPIView
 
 admin.site.site_header = settings.ADMIN_SITE_HEADER
@@ -16,6 +17,7 @@ urlpatterns = [
     url(r'^$', HomeView.as_view(), name="home"),
     url(r'^(?P<uuid>.{32})/sent/$', PaymentSentView.as_view(),
         name='payment_sent'),
+    url(r'^api/v1/callback/$', CallbackAPIView.as_view(), name='callback_api'),
     url(r'^api/v1/transaction/$', TransactionAPIView.as_view(),
         name='transaction_api'),
     url(r'^api/v1/exchange/$', ExchangeRateAPIView.as_view(),
