@@ -108,7 +108,11 @@ class ExchangeRateAPIView(View):
     """
     def get(self, request, *args, **kwargs):
         if not cache.has_key('rate'):
-            cache.set('rate', moneywagon.get_current_price('btc', 'usd')[0])
+            try:
+                current_price = moneywagon.get_current_price('btc', 'usd')[0]
+            except:
+                current_price = moneywagon.get_current_price('btc', 'usd')
+            cache.set('rate', current_price)
         rate = cache.get('rate')
 
         return JsonResponse({
