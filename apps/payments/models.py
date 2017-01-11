@@ -21,6 +21,7 @@ class Transaction(BaseModel):
         (STATUS_CONFIRMED, _('Confirmed')),
     )
 
+    payment_sent = models.BooleanField(default=False, blank=True)
     site = models.ForeignKey(Site, null=True)
     email = models.EmailField(null=True)
     amount_usd = models.DecimalField(max_digits=10, decimal_places=2)

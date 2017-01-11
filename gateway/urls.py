@@ -4,6 +4,7 @@ from django.conf import settings
 from django.views.generic import TemplateView
 from payments.views import HomeView
 from payments.views import TransactionView
+from payments.views import PaymentSentView
 from api.views import TransactionAPIView
 from api.views import ExchangeRateAPIView
 
@@ -13,6 +14,8 @@ admin.site.site_header = settings.ADMIN_SITE_HEADER
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomeView.as_view(), name="home"),
+    url(r'^(?P<uuid>.{32})/sent/$', PaymentSentView.as_view(),
+        name='payment_sent'),
     url(r'^api/v1/transaction/$', TransactionAPIView.as_view(),
         name='transaction_api'),
     url(r'^api/v1/exchange/$', ExchangeRateAPIView.as_view(),
