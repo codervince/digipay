@@ -113,9 +113,9 @@
                 request.onload = function() {
                   if (this.status >= 200 && this.status < 400) {
                     var data = JSON.parse(this.response);
-                    var rate = usd.val()/rate()
-                    btc.val(rate.toFixed(DECIMAL_PLACES))
-                    btcExact.val(rate.toFixed(DECIMAL_PLACES))
+                    var rawRate = usd.val()/rate()
+                    btc.val(rawRate.toFixed(DECIMAL_PLACES))
+                    btcExact.val(rawRate.toFixed(DECIMAL_PLACES))
                   }
                 };
 
@@ -125,9 +125,9 @@
             // rates update
             rate()
             usd.on('keyup', function() {
-                var rate = usd.val()/rate()
-                btc.val(rate.toFixed(DECIMAL_PLACES))
-                btcExact.val(rate.toFixed(DECIMAL_PLACES))
+                var rawRate = usd.val()/rate()
+                btc.val(rawRate.toFixed(DECIMAL_PLACES))
+                btcExact.val(rawRate.toFixed(DECIMAL_PLACES))
             })
 
             // payment button enabled
