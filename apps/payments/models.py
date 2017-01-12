@@ -1,8 +1,13 @@
+import sys
 import uuid
 import datetime
 import decimal
+import qrcode
+import qrcode.image.svg
+import io
 import moneywagon
 import requests
+import urllib
 from django.core.cache import cache
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -71,6 +76,26 @@ class Transaction(BaseModel):
                 current_price = moneywagon.get_current_price('btc', 'usd')
             cache.set('rate', current_price)
         return decimal.Decimal(cache.get('rate'))
+
+    def qr(self):
+        """Generate QR code for bitcoins
+        https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki#Examples
+        """
+        schema = 'bitcoin:{to_address}?amount={amount}&label={label}'
+        parsed = schema.format(
+            to_address=self.to_address,
+            amount=self.amount_btc,
+            label=urllib.parse.urlencode({
+                "label": "{site}:{project_code}".format(
+                    site=self.site.domain,
+                    project_code=self.project_code
+                )
+            })[6:]
+        )
+        qr = qrcode.make(parsed, image_factory=qrcode.image.svg.SvgImage)
+        buffer = io.BytesIO()
+        qr.save(buffer)
+        return buffer.getvalue()
 
     def save(self):
         if not self.amount_btc:

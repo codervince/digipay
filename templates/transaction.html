@@ -65,20 +65,23 @@
                 <div class="card-block card-line" style="padding-top:10px;padding-bottom:10px;">
                     <div class="card-text">
                         <div class="row">
-                            <div class="col-12">
-                                {% trans "Send exactly" %} <b><span class="btc-exact">{{ transaction.amount_btc|default_if_none:"" }}</span> BTC</b> to this address:
+                            <div class="col-5">
+                                {{ transaction.qr|safe }}
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <input type="text" name="{{ form.to_address.html_name }}" value="{{ transaction.to_address|default_if_none:"" }}" class="form-control" disabled>
+                            <div class="col-7" style="margin-top:auto;margin-bottom:auto;">
+                                {% trans "Send exactly" %} <b><span class="btc-exact">{{ transaction.amount_btc|default_if_none:"" }}</span> BTC</b> to:
+                                <input type="text" name="{{ form.to_address.html_name }}" value="{{ transaction.to_address|default_if_none:"" }}" class="form-control" disabled style="font-size:12px">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-block" style="padding-top:10px;padding-bottom:10px;border-bottom-left-radius:3px;border-bottom-right-radius:3px;background-color:aliceblue">
                     <div class="card-text text-center">
-                        {% trans "Awaiting Payment" %}
+                        {% if transaction.amount_btc > transaction.amount_paid %}
+                            {% trans "Awaiting Payment" %}
+                        {% else %}
+                            {% trans "Paid" %}
+                        {% endif %}
                     </div>
                 </div>
             </div>

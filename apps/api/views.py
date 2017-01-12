@@ -12,6 +12,8 @@ from core.views import CSRFExemptMixin
 from payments.models import Transaction
 from site_ext.models import SiteExt
 from .forms import CallbackForm
+from .tasks import send_receipt
+from .tasks import send_callback
 
 
 class TransactionAPIView(CSRFExemptMixin, View):
@@ -128,7 +130,9 @@ class CallbackAPIView(CSRFExemptMixin, View):
         SATOSHI = decimal.Decimal("0.00000001")
         transaction.amount_paid += SATOSHI * data['value']
         transaction.save()
-        # TODO Send callback notification to transaction.site
+
+        send_receipt.apply_async(kwargs={})
+        send_callback.apply_async(kwargs={})
         return HttpResponse()
 
 

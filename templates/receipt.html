@@ -1,0 +1,25 @@
+{% load humanize %}
+<div>
+Hi there,
+<br/>
+A payment of {{ transaction.amount_btc }} ({{ transaction.amount_usd }}) made {{ transaction.created_at|naturaltime }} was successfully credited to your
+{{ transaction.site.name }}  project {{ transaction.project_code }} balance.
+<br/>
+So what's next?
+<br/>
+Each of your language combinations will now have an equal bounty associated with it.
+If the bounty is attractive enough, expect a flood of candidates to send in their work before the deadline (default 24 hours).
+<br/>
+Sit back, relax, and let your candidates get to work!
+<br/>
+After the deadline be sure to select the best translation.
+<br/>
+In the unlikely event you do not receive any replies in a particular language combination, we will refund you that portion of your bounty!
+<br/>
+Make sure you have entered a Bitcoin address on your Profile page to receive payments.
+<br/>
+Feel free to email if you have any questions.
+<br/>
+Thank you!
+{{ transaction.site.name }} Support
+</div>

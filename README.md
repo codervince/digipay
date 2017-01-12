@@ -46,3 +46,18 @@ response has status code 200 if success and body:
     "url": "<gateway domain>/<transaction uuid4 id>/"
 }
 ```
+
+## Callback when transaction changed it's status
+
+It is sent to Site -> Callback url that you configure in /admin/ panel
+
+Request body:
+
+```
+{
+    "project_code": "...",
+    "email": "john@example.com",
+    "status": 2,
+    "transaction_id": "...."
+}
+```
