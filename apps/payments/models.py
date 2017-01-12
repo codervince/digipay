@@ -105,9 +105,10 @@ class Transaction(BaseModel):
         if not self.to_address:
             url = 'https://www.blockonomics.co/api/new_address';
             api_key = self.site.site_ext.api_key
-            headers = {'Authorization': "Bearer " + api_key}
-            r = requests.post(url, headers=headers)
-            self.to_address = r.json()['address']
+            if api_key:
+                headers = {'Authorization': "Bearer " + api_key}
+                r = requests.post(url, headers=headers)
+                self.to_address = r.json()['address']
         return super(Transaction, self).save()
 
     def get_absolute_url(self):
