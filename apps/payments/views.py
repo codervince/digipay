@@ -34,7 +34,10 @@ class TransactionView(TemplateView):
         return uuid.UUID(self.kwargs['uuid'])
 
     def get_object(self):
-        return get_object_or_404(Transaction, id=self.get_id())
+        obj = get_object_or_404(Transaction, id=self.get_id())
+        if not obj.to_address and obj.site.site_ext.api_key:
+            obj.save()
+        return obj
 
     def get_context_data(self, **kwargs):
         kwargs.update({
