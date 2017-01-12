@@ -113,17 +113,17 @@ class CallbackAPIView(CSRFExemptMixin, View):
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
-        return HttpResponse(status_code=400)
+        return HttpResponse(status=400)
 
     def form_valid(self, form):
         data = form.cleaned_data
         if data['secret'] != '45c75bd587ab4a5b94163c7c741c1dec':
-            return HttpResponse(status_code=400)
+            return HttpResponse(status=400)
 
         try:
             transaction = Transaction.objects.get(to_address=data['addr'])
         except Transaction.DoesNotExist:
-            return HttpResponse(status_code=400)
+            return HttpResponse(status=400)
 
         transaction.status = data['status']
         transaction.txid = data['txid']
@@ -131,8 +131,9 @@ class CallbackAPIView(CSRFExemptMixin, View):
         transaction.amount_paid += SATOSHI * data['value']
         transaction.save()
 
-        send_receipt.apply_async(kwargs={})
-        send_callback.apply_async(kwargs={})
+        context = {'transaction_id': transaction.id}
+        send_receipt.apply_async(kwargs=context)
+        send_callback.apply_async(kwargs=context)
         return HttpResponse()
 
 

@@ -8,7 +8,7 @@ from payments.models import Transaction
 
 
 @app.task
-def send_receipt(transaction_id, email):
+def send_receipt(transaction_id):
     """Send receipt
     """
     transaction = Transaction.objects.get(id=transaction_id)
@@ -21,7 +21,7 @@ def send_receipt(transaction_id, email):
         ugettext('Receipt'),  # subject
         text_content,  # text message
         settings.DEFAULT_FROM_EMAIL,  # from
-        [email]  # to
+        [transaction.email]  # to
     )
     msg.attach_alternative(html_content, 'text/html')
     msg.send(fail_silently=False)
