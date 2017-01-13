@@ -14,6 +14,8 @@ make
 
 Open [Merchant Wizard](https://www.blockonomics.co/merchants) and create callback `<gateway domain>/api/v1/callback/?secret=45c75bd587ab4a5b94163c7c741c1dec`
 
+API key that is added per site is a blockonomics API key. You can find your API key or generate it [here](https://www.blockonomics.co/blockonomics#/settings).
+
 ## API
 
 ### Create transaction page
