@@ -65,7 +65,7 @@
                 <div class="card-block card-line" style="padding-top:10px;padding-bottom:10px;">
                     <div class="card-text">
                         <div class="row">
-                            <div class="col-5">
+                            <div class="col-5 qr">
                                 {{ transaction.qr|safe }}
                             </div>
                             <div class="col-7" style="margin-top:auto;margin-bottom:auto;">
@@ -104,6 +104,7 @@
             var btc = $('.btc')
             var btcExact = $('.btc-exact')
             var usd = $('.usd')
+            var qr = $('.qr')
             var DECIMAL_PLACES = 8
 
             var rate = function() {
@@ -116,6 +117,7 @@
                     var rawRate = usd.val()/data.rate
                     btc.val(rawRate.toFixed(DECIMAL_PLACES))
                     btcExact.html(rawRate.toFixed(DECIMAL_PLACES))
+                    qr.html('<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ transaction.qr_schema|urlencode }}'+ rawRate.toFixed(DECIMAL_PLACES) +'">')
                   }
                 };
 

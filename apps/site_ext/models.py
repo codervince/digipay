@@ -4,6 +4,7 @@ from django.contrib.sites.models import Site
 from core.models import BaseModel
 from django.utils.translation import ugettext_lazy as _
 
+
 class SiteExt(BaseModel):
     """Every site must have token for security reasons
     """

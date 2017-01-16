@@ -149,7 +149,7 @@ class ExchangeRateAPIView(View):
 
     Response:
     {
-        "rate": 905.99
+        "rate": 905.99,
     }
     """
     def get(self, request, *args, **kwargs):

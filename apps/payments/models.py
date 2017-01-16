@@ -97,6 +97,19 @@ class Transaction(BaseModel):
         qr.save(buffer)
         return buffer.getvalue()
 
+    def qr_schema(self):
+        schema = 'bitcoin:{to_address}?label={label}&amount='
+        parsed = schema.format(
+            to_address=self.to_address,
+            label=urllib.parse.urlencode({
+                "label": "{site} {project_code}".format(
+                    site=self.site.domain,
+                    project_code=self.project_code
+                )
+            })[6:]
+        )
+        return parsed
+
     def save(self):
         if not self.amount_btc:
             self.amount_btc = round(
