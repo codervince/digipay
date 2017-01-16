@@ -93,9 +93,11 @@ class TransactionAPIView(CSRFExemptMixin, View):
                 amount_usd=data['amount_usd'],
             )
             transaction.save()
-            check_transaction.apply_async(kwargs={
-                                            'transaction_id': transaction.id},
-                                          eta=transaction.ends_at())
+            eta = transaction.ends_at() + datetime.timedelta(minutes=settings.EXTRA_TIME)
+            check_transaction.apply_async(
+                kwargs={
+                    'transaction_id': transaction.id},
+                eta=eta)
             url = '{scheme}://{host}{url}'.format(
                 scheme=request.scheme,
                 host=request.get_host(),

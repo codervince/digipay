@@ -1,3 +1,4 @@
+import json
 import requests
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -46,5 +47,11 @@ def check_transaction(transaction_id):
     """if transaction is still unconfirmed then delete it.
     """
     transaction = Transaction.objects.using('default').get(id=transaction_id)
-    if transaction.status == transaction.STATUS_UNCONFIRMED:
+    data = '{"addr":"{addr}"}'.format(addr=transaction.to_address)
+    r = requests.post('https://www.blockonomics.co/api/balance',
+                      data=data)
+    response = json.loads(r.content)
+    record = response['response'][0]
+    if transaction.status == transaction.STATUS_UNCONFIRMED \
+            and record['confirmed'] == 0:
         transaction.delete()
