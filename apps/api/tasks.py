@@ -39,3 +39,12 @@ def send_callback(transaction_id):
         'transaction_id': trasnaction.id.hex
     }
     requests.post(transaction.site.site_ext.callback, data=data)
+
+
+@app.task
+def check_transaction(transaction_id):
+    """if transaction is still unconfirmed then delete it.
+    """
+    transaction = Transaction.objects.using('default').get(id=transaction_id)
+    if transaction.status == transaction.STATUS_UNCONFIRMED:
+        transaction.delete()

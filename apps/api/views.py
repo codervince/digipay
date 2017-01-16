@@ -14,6 +14,7 @@ from site_ext.models import SiteExt
 from .forms import CallbackForm
 from .tasks import send_receipt
 from .tasks import send_callback
+from .tasks import check_transaction
 
 
 class TransactionAPIView(CSRFExemptMixin, View):
@@ -92,6 +93,9 @@ class TransactionAPIView(CSRFExemptMixin, View):
                 amount_usd=data['amount_usd'],
             )
             transaction.save()
+            check_transaction.apply_async(kwargs={
+                                            'transaction_id': transaction.id},
+                                          eta=transaction.ends_at())
             url = '{scheme}://{host}{url}'.format(
                 scheme=request.scheme,
                 host=request.get_host(),

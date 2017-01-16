@@ -22,8 +22,7 @@ class BaseModel(models.Model):
         if not self._forced_delete:
             model = self.__class__
             kwargs.update({'trashed': True})
-            model.objects.using(self._db).filter(
-                    pk=self.id).update(**kwargs)
+            model.objects.filter(pk=self.id).update(**kwargs)
         else:
             super(BaseModel, self).delete(**kwargs)
 

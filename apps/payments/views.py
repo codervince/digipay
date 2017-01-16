@@ -8,7 +8,6 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone
 from .forms import TransactionForm
 from .models import Transaction
-from .tasks import check_transaction
 
 
 class HomeView(TemplateView):
@@ -71,11 +70,6 @@ class TransactionView(TemplateView):
         return self.render_to_response(context)
 
     def form_valid(self, form):
-        transaction = form.save()
-        transaction.payment_sent = True
-        transaction.save()
-        check_transaction.apply_async(kwargs={'transaction': transaction},
-                                      eta=transaction.ends_at())
         return HttpResponseRedirect(
             reverse('payment_sent', args=(transaction.id.hex,)))
 
