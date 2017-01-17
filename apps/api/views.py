@@ -9,6 +9,7 @@ from django.conf import settings
 from django.views import View
 from django.http import JsonResponse
 from django.http import HttpResponse
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.utils.cache import get_cache_key
 from core.views import CSRFExemptMixin
@@ -68,12 +69,12 @@ class TransactionAPIView(CSRFExemptMixin, View):
         if data.get('project_code') and data.get('email'):
             code = data.get('project_code')
             email = data.get('email')
-            previous = Transaction.objects.filter(project_code=code).first()
+            previous = Transaction.objects.filter(project_code=code)\
+                .order_by('-created_at').first()
             if previous and previous.email != email:
                 error(_('project code is already used by another email'))
-            # if Transaction.objects.filter(project_code=data.get('project_code'),
-            #                               email=data.get('email')).count():
-            #     error(_('project_code and email already exist'))
+            elif previous.created_at + datetime.timedelta(minutes=settings.HOLD_TIMEOUT) > timezone.now():
+                error(_('Try again later'))
 
         if errors['errors']:
             return errors, False
