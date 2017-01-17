@@ -16,6 +16,29 @@ Open [Merchant Wizard](https://www.blockonomics.co/merchants) and create callbac
 
 API key that is added per site is a blockonomics API key. You can find your API key or generate it [here](https://www.blockonomics.co/blockonomics#/settings).
 
+## Deploy & Update
+
+```
+ssh dev1@138.68.90.116
+update
+```
+
+`update` command lives in `/home/dev1/bin/`. Other configs related to server:
+
+- `/etc/nginx/sites-enabled/default`
+- `/etc/supervisor.d/conf.d/gateway.conf`
+
+If you put the code into your repository please udpate `update` method and add
+new repo to the server repo:
+
+```
+cd /home/dev1/gateway
+git remote add ...
+```
+
+and in `/home/dev1/bin/update` change `git pull --rebase` line with appropriate
+repository.
+
 ## API
 
 ### Create transaction page
