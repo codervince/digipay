@@ -217,9 +217,9 @@ class PaymentStatusAPIView(View):
     """
     def get(self, request, *args, **kwargs):
         mapping = {
-            Transaction.STATUS_CONFIRMED: _('Paid'),
-            Transaction.STATUS_UNCONFIRMED: _('Awaiting payment'),
-            Transaction.STATUS_PARTIALLY_CONFIRMED: _('Partially paid')
+            Transaction.STATUS_CONFIRMED: 'Paid',
+            Transaction.STATUS_UNCONFIRMED: 'Awaiting payment',
+            Transaction.STATUS_PARTIALLY_CONFIRMED: 'Partially paid'
         }
         transaction = Transaction.objects.get(id=request.GET.get('id'))
 
