@@ -156,7 +156,7 @@
             var N = 10000
             var statusMsg = $('.msg')
             setInterval(function() {
-                var endpoint = '{% url 'transaction_status_api' %}'
+                var endpoint = '{% url 'transaction_status_api' %}?id={{ transaction.id }}'
 
                 var request = new XMLHttpRequest();
                 request.open('GET', endpoint, true);
