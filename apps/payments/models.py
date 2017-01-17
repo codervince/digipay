@@ -23,7 +23,9 @@ class Payment(BaseModel):
     STATUS_UNCONFIRMED = 0
     STATUS_PARTIALLY_CONFIRMED = 1
     STATUS_CONFIRMED = 2
+    STATUS_INITIATED = 3
     STATUS_CHOICES = (
+        (STATUS_INITIATED, _('Initiated')),
         (STATUS_UNCONFIRMED, _('Unconfirmed')),
         (STATUS_PARTIALLY_CONFIRMED, _('Partially Confirmed')),
         (STATUS_CONFIRMED, _('Confirmed')),
@@ -62,7 +64,8 @@ class Transaction(BaseModel):
     to_address = models.CharField(max_length=34, null=True)
     project_code = models.UUIDField(default=uuid.uuid4, editable=False,
                                     null=True)
-    status = models.IntegerField(choices=STATUS_CHOICES, null=True,
+    status = models.IntegerField(choices=STATUS_CHOICES,
+                                 default=STATUS_INITIATED, null=True,
                                  editable=False)
 
     def __str__(self):

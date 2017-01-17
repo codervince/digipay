@@ -96,15 +96,38 @@ class TransactionAPIView(CSRFExemptMixin, View):
                 amount_usd=data['amount_usd'],
             )
             transaction.save()
-            eta = transaction.ends_at() + datetime.timedelta(minutes=settings.EXTRA_TIME)
+            eta = lambda x: transaction.ends_at() + datetime.timedelta(minutes=x)
+            # 1 minute after transaction creation
+            check_transaction.apply_async(
+                kwargs={
+                    'transaction_id': transaction.id,
+                    'delete': False
+                },
+                eta=eta(1))
+            # 3 minutes after transaction creation
+            check_transaction.apply_async(
+                kwargs={
+                    'transaction_id': transaction.id,
+                    'delete': False
+                },
+                eta=eta(3))
+            # 10 minutes after transaction creation
+            check_transaction.apply_async(
+                kwargs={
+                    'transaction_id': transaction.id,
+                    'delete': False
+                },
+                eta=eta(10))
+            # When settings.TIMER is out
             check_transaction.apply_async(
                 kwargs={
                     'transaction_id': transaction.id,
                     'delete': False
                 },
                 eta=transaction.ends_at())
+            # When settings.TIMER + settings.EXTRA_TIME is out
             check_transaction.apply_async(
-                kwargs={ 'transaction_id': transaction.id}, eta=eta)
+                kwargs={ 'transaction_id': transaction.id}, eta=eta(settings.EXTRA_TIME))
             url = '{scheme}://{host}{url}'.format(
                 scheme=request.scheme,
                 host=request.get_host(),
