@@ -46,7 +46,9 @@ class Transaction(BaseModel):
     STATUS_UNCONFIRMED = 0
     STATUS_PARTIALLY_CONFIRMED = 1
     STATUS_CONFIRMED = 2
+    STATUS_INITIATED = 3
     STATUS_CHOICES = (
+        (STATUS_INITIATED, _('Initiated')),
         (STATUS_UNCONFIRMED, _('Unconfirmed')),
         (STATUS_PARTIALLY_CONFIRMED, _('Partially Confirmed')),
         (STATUS_CONFIRMED, _('Confirmed')),
