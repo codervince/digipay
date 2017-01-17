@@ -66,9 +66,14 @@ class TransactionAPIView(CSRFExemptMixin, View):
             error(_('amount_usd is required'))
 
         if data.get('project_code') and data.get('email'):
-            if Transaction.objects.filter(project_code=data.get('project_code'),
-                                          email=data.get('email')).count():
-                error(_('project_code and email already exist'))
+            code = data.get('project_code')
+            email = data.get('email')
+            previous = Transaction.objects.filter(project_code=code).first()
+            if previous and previous.email != email:
+                error(_('project code is already used by another email'))
+            # if Transaction.objects.filter(project_code=data.get('project_code'),
+            #                               email=data.get('email')).count():
+            #     error(_('project_code and email already exist'))
 
         if errors['errors']:
             return errors, False

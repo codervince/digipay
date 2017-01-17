@@ -116,6 +116,14 @@ class Transaction(BaseModel):
         return parsed
 
     def save(self):
+        first = Transaction.objects.filter(
+            project_code=self.project_code).first()
+
+        # Don't allow to save new transaction for other email if project_code
+        # was used with another email initially
+        if first and first.email != self.email:
+            return
+
         if not self.amount_btc:
             self.amount_btc = round(
                 decimal.Decimal(self.amount_usd)/self.get_rate(), 8)
@@ -137,4 +145,3 @@ class Transaction(BaseModel):
 
     class Meta:
         db_table = 'transactions'
-        unique_together = (('project_code', 'email', 'site'),)
