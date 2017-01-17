@@ -121,7 +121,7 @@ class Transaction(BaseModel):
             if api_key:
                 headers = {'Authorization': "Bearer " + api_key}
                 r = requests.post(url, headers=headers)
-                self.to_address = r.json()['address']
+                self.to_address = r.json().get('address')
         return super(Transaction, self).save()
 
     def get_absolute_url(self):
