@@ -74,7 +74,7 @@ class TransactionAPIView(CSRFExemptMixin, View):
             if previous and previous.email != email:
                 error(_('project code is already used by another email'))
             elif previous.created_at + datetime.timedelta(minutes=settings.HOLD_TIMEOUT) > timezone.now():
-                error(_('Try again later'))
+                error(_('try again later'))
 
         if errors['errors']:
             return errors, False
