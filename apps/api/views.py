@@ -4,6 +4,7 @@ import json
 import datetime
 import moneywagon
 from django.core.cache import cache
+from django.conf import settings
 from django.views import View
 from django.http import JsonResponse
 from django.http import HttpResponse
