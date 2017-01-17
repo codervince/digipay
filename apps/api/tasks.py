@@ -43,15 +43,21 @@ def send_callback(transaction_id):
 
 
 @app.task
-def check_transaction(transaction_id):
+def check_transaction(transaction_id, delete=True):
     """if transaction is still unconfirmed then delete it.
     """
     transaction = Transaction.objects.using('default').get(id=transaction_id)
-    data = '{"addr":"{addr}"}'.format(addr=transaction.to_address)
+    data = '{"addr":"%s"}' % transaction.to_address
     r = requests.post('https://www.blockonomics.co/api/balance',
                       data=data)
-    response = json.loads(r.content)
+    response = json.loads(r.content.decode('utf-8'))
     record = response['response'][0]
-    if transaction.status == transaction.STATUS_UNCONFIRMED \
-            and record['confirmed'] == 0:
-        transaction.delete()
+    if transaction.status == transaction.STATUS_UNCONFIRMED and record['confirmed'] == 0:
+        if delete:
+            transaction.delete()
+    else:
+        if record['confirmed'] and not record['unconfirmed']:
+            transaction.status = transaction.STATUS_CONFIRMED
+        else:
+            transaction.status = transaction.STATUS_PARTIALLY_CONFIRMED
+        transaction.save()

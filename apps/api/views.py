@@ -3,6 +3,7 @@ import decimal
 import json
 import datetime
 import moneywagon
+import requests
 from django.core.cache import cache
 from django.conf import settings
 from django.views import View
@@ -98,8 +99,12 @@ class TransactionAPIView(CSRFExemptMixin, View):
             eta = transaction.ends_at() + datetime.timedelta(minutes=settings.EXTRA_TIME)
             check_transaction.apply_async(
                 kwargs={
-                    'transaction_id': transaction.id},
-                eta=eta)
+                    'transaction_id': transaction.id,
+                    'delete': False
+                },
+                eta=transaction.ends_at())
+            check_transaction.apply_async(
+                kwargs={ 'transaction_id': transaction.id}, eta=eta)
             url = '{scheme}://{host}{url}'.format(
                 scheme=request.scheme,
                 host=request.get_host(),
@@ -167,4 +172,39 @@ class ExchangeRateAPIView(View):
 
         return JsonResponse({
             "rate": rate
+        })
+
+
+class PaymentStatusAPIView(View):
+    """Payment status API endpoint
+
+    GET request:
+    /api/v1/transaction/status/?id=j234jk123j4kj1234kj
+
+    Response:
+    {
+        "message": "Paid",
+    }
+    """
+    def get(self, request, *args, **kwargs):
+        mapping = {
+            Transaction.STATUS_CONFIRMED: _('Paid'),
+            Transaction.STATUS_UNCONFIRMED: _('Awaiting payment'),
+            Transaction.STATUS_PARTIALLY_CONFIRMED: _('Partially paid')
+        }
+        transaction = Transaction.objects.get(id=request.GET.get('id'))
+
+        data = '{"addr":"%s"}' % transaction.to_address
+        r = requests.post('https://www.blockonomics.co/api/balance',
+                          data=data)
+        response = json.loads(r.content.decode('utf-8'))
+        record = response['response'][0]
+        if record['confirmed'] and not record['unconfirmed']:
+            transaction.status = transaction.STATUS_CONFIRMED
+        else:
+            transaction.status = transaction.STATUS_PARTIALLY_CONFIRMED
+        transaction.save()
+
+        return JsonResponse({
+            "message": mapping[transaction.status]
         })

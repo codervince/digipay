@@ -8,6 +8,7 @@ from payments.views import PaymentSentView
 from api.views import TransactionAPIView
 from api.views import CallbackAPIView
 from api.views import ExchangeRateAPIView
+from api.views import PaymentStatusAPIView
 
 admin.site.site_header = settings.ADMIN_SITE_HEADER
 
@@ -20,6 +21,8 @@ urlpatterns = [
     url(r'^api/v1/callback/$', CallbackAPIView.as_view(), name='callback_api'),
     url(r'^api/v1/transaction/$', TransactionAPIView.as_view(),
         name='transaction_api'),
+    url(r'^api/v1/transaction/status/$', PaymentStatusAPIView.as_view(),
+        name='payment_status_api'),
     url(r'^api/v1/exchange/$', ExchangeRateAPIView.as_view(),
         name='exchange_api'),
     url(r'^(?P<uuid>.{32})/$', TransactionView.as_view(), name='transaction'),

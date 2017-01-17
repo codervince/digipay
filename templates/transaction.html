@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="card-block" style="padding-top:10px;padding-bottom:10px;border-bottom-left-radius:3px;border-bottom-right-radius:3px;background-color:aliceblue">
-                    <div class="card-text text-center">
+                    <div class="card-text text-center msg">
                         {% if transaction.amount_btc > transaction.amount_paid %}
                             {% trans "Awaiting Payment" %}
                         {% else %}
@@ -151,6 +151,25 @@
                     }
                 })
             })
+
+            // every N seconds check the server for status change
+            var N = 10000
+            var statusMsg = $('.msg')
+            setInterval(function() {
+                var endpoint = '{% url 'transaction_status_api' %}'
+
+                var request = new XMLHttpRequest();
+                request.open('GET', endpoint, true);
+
+                request.onload = function() {
+                  if (this.status >= 200 && this.status < 400) {
+                    var data = JSON.parse(this.response);
+                    statusMsg.html(data.message)
+                  }
+                };
+
+                request.send()
+            }, N)
         })
     })();
 </script>
