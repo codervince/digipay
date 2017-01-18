@@ -54,13 +54,13 @@ def check_transaction(transaction_id, delete=True):
     response = json.loads(r.content.decode('utf-8'))
     record = response['response'][0]
     SATOSHI = decimal.Decimal("0.00000001")
-    if transaction.status == transaction.STATUS_UNCONFIRMED and record['confirmed'] == 0:
+    if transaction.status in (transaction.STATUS_UNCONFIRMED, transaction.STATUS_INITIATED) and record['confirmed'] == 0:
         if delete:
             transaction.delete()
     else:
-        if record['confirmed'] and not record['unconfirmed']:
+        if record['confirmed'] and record['confirmed'] * SATOSHI >= transaction.amount_btc:
             transaction.status = transaction.STATUS_CONFIRMED
-        else:
+        elif record['unconfirmed'] * SATOSHI >= transaction.amount_btc:
             transaction.status = transaction.STATUS_PARTIALLY_CONFIRMED
         transaction.amount_paid = record['confirmed'] * SATOSHI
         transaction.save()
