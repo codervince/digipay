@@ -235,19 +235,40 @@ class PaymentStatusAPIView(View):
             Transaction.STATUS_UNCONFIRMED: 'Awaiting payment',
             Transaction.STATUS_PARTIALLY_CONFIRMED: 'Partially paid'
         }
+        txid = ''
         transaction = Transaction.objects.get(id=request.GET.get('id'))
 
-        data = '{"addr":"%s"}' % transaction.to_address
-        r = requests.post('https://www.blockonomics.co/api/balance',
-                          data=data)
-        response = json.loads(r.content.decode('utf-8'))
-        record = response['response'][0]
-        if record['confirmed'] and not record['unconfirmed']:
-            transaction.status = transaction.STATUS_CONFIRMED
-        else:
-            transaction.status = transaction.STATUS_PARTIALLY_CONFIRMED
+        SATOSHI = decimal.Decimal("0.00000001")
+        # Get txid
+        r = requests.post("https://www.blockonomics.co/api/searchhistory",
+                          data=json.dumps({'addr': transaction.to_address}))
+        try:
+            txid = json.loads(r.content.decode('utf-8'))['history'][0]['txid']
+        except:
+            return JsonResponse({
+                "error": "can't get txid"
+            })
+
+        # Get and update status
+        r = requests.post("https://www.blockonomics.co/api/tx_detail",
+                          params={'txid': txid})
+        data = json.loads(r.content.decode('utf-8'))['status']
+        mapping = {
+            'Confirmed': Transaction.STATUS_CONFIRMED,
+            'Partially Confirmed': Transaction.STATUS_PARTIALLY_CONFIRMED,
+            'Unconfirmed': Transaction.STATUS_UNCONFIRMED
+        }
+        transaction.status = mapping[data['status']]
+        for item in data['vout']:
+            if item['address'] == transaction.to_address:
+                transaction.amount_paid = item['value'] * SATOSHI
         transaction.save()
 
+        if transaction.status in (
+                transaction.STATUS_UNCONFIRMED,
+                transaction.STATUS_INITIATED) and delete:
+            transaction.delete()
+
         return JsonResponse({
-            "message": mapping[transaction.status]
+            "message": mapping[transaction.status] + ' %s' % txid
         })
