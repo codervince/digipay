@@ -117,6 +117,20 @@ class TransactionAPIView(CSRFExemptMixin, View):
                     'delete': False
                 },
                 eta=eta(3))
+            # 5 minutes after transaction creation
+            check_transaction.apply_async(
+                kwargs={
+                    'transaction_id': transaction.id,
+                    'delete': False
+                },
+                eta=eta(5))
+            # 7 minutes after transaction creation
+            check_transaction.apply_async(
+                kwargs={
+                    'transaction_id': transaction.id,
+                    'delete': False
+                },
+                eta=eta(7))
             # 10 minutes after transaction creation
             check_transaction.apply_async(
                 kwargs={

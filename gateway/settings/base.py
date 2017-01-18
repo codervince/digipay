@@ -141,7 +141,7 @@ SITE_ID = 1
 ADMIN_SITE_HEADER = 'Payment Gateway'
 
 # Minutes
-TIMER = 20
+TIMER = 999
 EXTRA_TIME = 15
 HOLD_TIMEOUT = 5
 
