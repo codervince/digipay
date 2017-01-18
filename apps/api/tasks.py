@@ -54,13 +54,31 @@ def check_transaction(transaction_id, delete=True):
     response = json.loads(r.content.decode('utf-8'))
     record = response['response'][0]
     SATOSHI = decimal.Decimal("0.00000001")
-    if transaction.status in (transaction.STATUS_UNCONFIRMED, transaction.STATUS_INITIATED) and record['confirmed'] == 0:
+    if transaction.status in (
+            transaction.STATUS_UNCONFIRMED,
+            transaction.STATUS_INITIATED) and record['confirmed'] == 0:
         if delete:
             transaction.delete()
     else:
-        if record['confirmed'] and record['confirmed'] * SATOSHI >= transaction.amount_btc:
-            transaction.status = transaction.STATUS_CONFIRMED
-        elif record['unconfirmed'] * SATOSHI >= transaction.amount_btc:
-            transaction.status = transaction.STATUS_PARTIALLY_CONFIRMED
-        transaction.amount_paid = record['confirmed'] * SATOSHI
+        # Get txid
+        r = requests.post("https://www.blockonomics.co/api/searchhistory",
+                          data=json.dumps({'addr': transaction.to_address}))
+        try:
+            txid = json.loads(r.content.decode('utf-8'))['history'][0]['txid']
+        except:
+            return
+
+        # Get and update status
+        r = requests.post("https://www.blockonomics.co/api/tx_detail",
+                          params={'txid': txid})
+        data = json.loads(r.content.decode('utf-8'))['status']
+        mapping = {
+            'Confirmed': Transaction.STATUS_CONFIRMED,
+            'Partially Confirmed': Transaction.STATUS_PARTIALLY_CONFIRMED,
+            'Unconfirmed': Transaction.STATUS_UNCONFIRMED
+        }
+        transaction.status = mapping[data['status']]
+        for item in data['vout']:
+            if item['address'] == transaction.to_address:
+                transaction.amount_paid = item['value'] * SATOSHI
         transaction.save()
