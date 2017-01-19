@@ -2,6 +2,8 @@ import decimal
 import json
 import requests
 from .models import Transaction
+from api.tasks import send_callback
+from api.tasks import send_receipt
 
 
 SATOSHI = decimal.Decimal(0.00000001)
@@ -35,6 +37,12 @@ def check(transaction):
         'Partially Confirmed': Transaction.STATUS_PARTIALLY_CONFIRMED,
         'Unconfirmed': Transaction.STATUS_UNCONFIRMED
     }
+
+    if transaction.status != mapping[status]:
+        send_callback.apply_async(kwargs={'transaction_id': transaction.id})
+
+    if mapping[status] == Transaction.STATUS_CONFIRMED:
+        send_receipt.apply_async(kwargs={'transaction_id': transaction.id})
 
     transaction.txid = txid
     transaction.status = mapping[status]
