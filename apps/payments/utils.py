@@ -13,7 +13,7 @@ def set_tx_details(history_data, transaction):
     """Does check for 1 transaction"""
     txid = None
     for item in history_data:
-        if item['addr'] == transaction.to_address:
+        if item['addr'][0] == transaction.to_address:
             txid = item['txid']
 
     if not txid:
@@ -30,11 +30,10 @@ def set_tx_details(history_data, transaction):
     tx_detail = json.loads(r.content.decode('utf-8'))
     status = tx_detail['status']
     for item in tx_detail['vout']:
-        for transaction in transactions:
-            if item['address'] == transaction.to_address:
-                value = decimal.Decimal(item['value'])
-                amount = value * SATOSHI
-                amount = round(amount, 8)
+        if item['address'] == transaction.to_address:
+            value = decimal.Decimal(item['value'])
+            amount = value * SATOSHI
+            amount = round(amount, 8)
 
     if transaction.status != mapping[status]:
         send_webhook.apply_async(kwargs={'transaction_id': transaction.id})
