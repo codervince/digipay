@@ -153,7 +153,7 @@
             })
 
             // every N seconds check the server for status change
-            var N = 10000
+            var N = 60000
             var statusMsg = $('.msg')
             setInterval(function() {
                 var endpoint = '{% url 'payment_status_api' %}?id={{ transaction.id }}'
