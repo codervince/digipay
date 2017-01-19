@@ -239,7 +239,15 @@ class PaymentStatusAPIView(View):
             Transaction.STATUS_PARTIALLY_CONFIRMED: 'Partially paid'
         }
         id = request.GET.get('id')
-        check(id)
+        if not id:
+            return JsonResponse({'message': ""})
+
+        # Add to the queue
+        queue = cache.get('payment_status_queue', set())
+        queue.add(id)
+        cache.set('payment_status_queue', queue, 60 * 60 * 24)
+
+        # We don't make calls to the API due to API limit on 2 req/minute
         transaction = Transaction.objects.get(id=id)
 
         message = mapping[transaction.status]
