@@ -240,6 +240,9 @@ class PaymentStatusAPIView(View):
         check(id)
         transaction = Transaction.objects.get(id=id)
 
+        message = mapping[transaction.status]
+        if transaction.txid:
+            message += ' %s' % transaction.txid
         return JsonResponse({
-            "message": mapping[transaction.status] + ' %s' % transaction.txid
+            "message": message
         })
