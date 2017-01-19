@@ -4,6 +4,7 @@ import json
 import datetime
 import moneywagon
 import requests
+from django.core.validators import URLValidator
 from django.core.cache import cache
 from django.conf import settings
 from django.views import View
@@ -17,8 +18,8 @@ from payments.models import Transaction
 from payments.utils import check
 from site_ext.models import SiteExt
 from .forms import CallbackForm
-from .tasks import send_receipt
-from .tasks import send_callback
+from payments.tasks import send_receipt
+from payments.tasks import send_webhook
 from .tasks import check_transaction
 
 
@@ -101,6 +102,7 @@ class TransactionAPIView(CSRFExemptMixin, View):
                 email=data['email'],
                 project_code=data['project_code'],
                 amount_usd=data['amount_usd'],
+                webhook=data['webhook'],
             )
             transaction.save()
             eta = lambda x: transaction.ends_at() + datetime.timedelta(minutes=x)
@@ -190,7 +192,7 @@ class CallbackAPIView(CSRFExemptMixin, View):
 
         context = {'transaction_id': transaction.id}
         send_receipt.apply_async(kwargs=context)
-        send_callback.apply_async(kwargs=context)
+        send_webhook.apply_async(kwargs=context)
         return HttpResponse()
 
 

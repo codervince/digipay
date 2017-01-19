@@ -2,8 +2,8 @@ import decimal
 import json
 import requests
 from .models import Transaction
-from api.tasks import send_callback
-from api.tasks import send_receipt
+from payments.tasks import send_webhook
+from payments.tasks import send_receipt
 
 
 SATOSHI = decimal.Decimal(0.00000001)

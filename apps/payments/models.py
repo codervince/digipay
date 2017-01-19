@@ -64,6 +64,7 @@ class Transaction(BaseModel):
                                       default=decimal.Decimal('0'),
                                       null=True)
     to_address = models.CharField(max_length=34, null=True)
+    webhook = models.URLField(blank=True, null=True)
     project_code = models.UUIDField(default=uuid.uuid4, editable=False,
                                     null=True)
     status = models.IntegerField(choices=STATUS_CHOICES,
