@@ -243,7 +243,7 @@ class PaymentStatusAPIView(View):
             return JsonResponse({'message': ""})
 
         # Add to the queue
-        queue = cache.get('payment_status_queue', set())
+        queue = cache.get('payment_status_queue', set([]))
         queue.add(id)
         cache.set('payment_status_queue', queue, 60 * 60 * 24)
 
