@@ -25,7 +25,7 @@ def check(transaction):
     tx_detail = json.loads(r.content.decode('utf-8'))
     status = tx_detail['status']
     for item in tx_detail['vout']:
-        if item['address'] == addr:
+        if item['address'] == transaction.to_address:
             value = decimal.Decimal(item['value'])
             amount = value * SATOSHI
             amount = round(amount, 8)
