@@ -20,8 +20,7 @@ app.conf.beat_schedule = {
     # Every 2 minutes
     'check_transactions': {
         'task': 'api.tasks.check_transactions',
-        'schedule': crontab(),
-        # 'args': None,
+        'schedule': crontab(minute='*/2'),
     },
 }
 
