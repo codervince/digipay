@@ -14,6 +14,7 @@ from django.utils.translation import ugettext as _
 from django.utils.cache import get_cache_key
 from core.views import CSRFExemptMixin
 from payments.models import Transaction
+from payments.utils import check
 from site_ext.models import SiteExt
 from .forms import CallbackForm
 from .tasks import send_receipt
@@ -235,40 +236,10 @@ class PaymentStatusAPIView(View):
             Transaction.STATUS_UNCONFIRMED: 'Awaiting payment',
             Transaction.STATUS_PARTIALLY_CONFIRMED: 'Partially paid'
         }
-        txid = ''
-        transaction = Transaction.objects.get(id=request.GET.get('id'))
-
-        SATOSHI = decimal.Decimal("0.00000001")
-        # Get txid
-        r = requests.post("https://www.blockonomics.co/api/searchhistory",
-                          data=json.dumps({'addr': transaction.to_address}))
-        try:
-            txid = json.loads(r.content.decode('utf-8'))['history'][0]['txid']
-        except:
-            return JsonResponse({
-                "error": "can't get txid"
-            })
-
-        # Get and update status
-        r = requests.post("https://www.blockonomics.co/api/tx_detail",
-                          params={'txid': txid})
-        data = json.loads(r.content.decode('utf-8'))['status']
-        mapping = {
-            'Confirmed': Transaction.STATUS_CONFIRMED,
-            'Partially Confirmed': Transaction.STATUS_PARTIALLY_CONFIRMED,
-            'Unconfirmed': Transaction.STATUS_UNCONFIRMED
-        }
-        transaction.status = mapping[data['status']]
-        for item in data['vout']:
-            if item['address'] == transaction.to_address:
-                transaction.amount_paid = item['value'] * SATOSHI
-        transaction.save()
-
-        if transaction.status in (
-                transaction.STATUS_UNCONFIRMED,
-                transaction.STATUS_INITIATED) and delete:
-            transaction.delete()
+        id = request.GET.get('id')
+        check(id)
+        transaction = Transaction.objects.get(id=id)
 
         return JsonResponse({
-            "message": mapping[transaction.status] + ' %s' % txid
+            "message": mapping[transaction.status] + ' %s' % transaction.txid
         })

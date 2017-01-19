@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext
 from gateway.celery import app
 from payments.models import Transaction
+from payments.utils import check
 
 
 @app.task
@@ -47,38 +48,9 @@ def send_callback(transaction_id):
 def check_transaction(transaction_id, delete=True):
     """if transaction is still unconfirmed then delete it.
     """
-    transaction = Transaction.objects.using('default').get(id=transaction_id)
-    data = '{"addr":"%s"}' % transaction.to_address
-    r = requests.post('https://www.blockonomics.co/api/balance',
-                      data=data)
-    response = json.loads(r.content.decode('utf-8'))
-    record = response['response'][0]
-    SATOSHI = decimal.Decimal("0.00000001")
-    if transaction.status in (
-            transaction.STATUS_UNCONFIRMED,
-            transaction.STATUS_INITIATED) and record['confirmed'] == 0:
-        if delete:
-            transaction.delete()
-    else:
-        # Get txid
-        r = requests.post("https://www.blockonomics.co/api/searchhistory",
-                          data=json.dumps({'addr': transaction.to_address}))
-        try:
-            txid = json.loads(r.content.decode('utf-8'))['history'][0]['txid']
-        except:
-            return
+    transaction = Transaction.objects.get(id=transaction_id)
+    check(transaction_id)
 
-        # Get and update status
-        r = requests.post("https://www.blockonomics.co/api/tx_detail",
-                          params={'txid': txid})
-        data = json.loads(r.content.decode('utf-8'))['status']
-        mapping = {
-            'Confirmed': Transaction.STATUS_CONFIRMED,
-            'Partially Confirmed': Transaction.STATUS_PARTIALLY_CONFIRMED,
-            'Unconfirmed': Transaction.STATUS_UNCONFIRMED
-        }
-        transaction.status = mapping[data['status']]
-        for item in data['vout']:
-            if item['address'] == transaction.to_address:
-                transaction.amount_paid = item['value'] * SATOSHI
-        transaction.save()
+    if transaction.status in (Transaction.STATUS_INITIATED,
+                              Transaction.STATUS_UNCONFIRMED) and delete:
+        transaction.delete()
