@@ -36,7 +36,7 @@ def send_webhook(transaction_id):
         'project_code': transaction.project_code,
         'email': transaction.email,
         'status': transaction.get_status_display(),
-        'transaction_id': trasnaction.id.hex,
+        'transaction_id': transaction.id.hex,
         'txid': transaction.txid
     }
     requests.post(transaction.webhook, data=data)
