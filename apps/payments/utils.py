@@ -13,9 +13,13 @@ SATOSHI = decimal.Decimal(0.00000001)
 def set_tx_details(history_data, transaction):
     """Does check for 1 transaction"""
     txid = None
-    for item in history_data:
-        if item['addr'][0] == transaction.to_address:
-            txid = item['txid']
+    if isinstance(history_data, dict):
+        if history_data['addr'][0] == transaction.to_address:
+            txid = history_data['txid']
+    else:
+        for item in history_data:
+            if item['addr'][0] == transaction.to_address:
+                txid = item['txid']
 
     if not txid:
         return
