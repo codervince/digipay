@@ -1,6 +1,7 @@
 import decimal
 import json
 import requests
+from blockchain import util
 from .models import Transaction
 from payments.tasks import send_webhook
 from payments.tasks import send_receipt
@@ -47,6 +48,23 @@ def set_tx_details(history_data, transaction):
     transaction.save()
 
 
+def blockchain_set_tx_detail(transaction):
+    """Check transaction detals and save updates using blockchain.info API"""
+    info_endpoint = "address/%s?format=json" % transaction.to_address
+    try:
+        info = json.loads(util.call_api(info_endpoint))
+    except:
+        return
+
+    transaction.txid = info['txs'][0]['hash']
+    transaction.amount_paid = round(info['total_received'] * SATOSHI, 8)
+
+    if transaction.amount_paid >= transaction.amount_btc:
+        transaction = Transaction.STATUS_CONFIRMED
+
+    transaction.save()
+
+
 def check(transaction):
     """check transaction status based on to_address"""
     if not isinstance(transaction, Transaction):
@@ -72,6 +90,6 @@ def checks(transactions):
     try:
         history_data = json.loads(r.content.decode('utf-8'))['history']
     except:
-        return
+        [blockchain_set_tx_detail(transaction) for transaction in transactions]
 
     [set_tx_details(history_data, transaction) for transaction in transactions]
