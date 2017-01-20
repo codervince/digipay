@@ -22,7 +22,7 @@ class TransactionView(TemplateView):
     template_name = 'transaction.html'
 
     def test_func(self):
-        if self.get_object().ends_at() > timezone.now():
+        if self.get_object().ends_at() > timezone.now() or self.request.GET('ended') != 'true':
             return True
         return False
 

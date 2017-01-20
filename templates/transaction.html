@@ -98,6 +98,9 @@
         $(function() {
             var endDate = moment.tz("{{ transaction.ends_at|date:"Y/m/d H:i" }}", moment.tz.guess());
             $('.countdown').countdown(endDate.toDate(), function(event){
+                if ($('.countdown').html() == '00:00') {
+                    window.location.pathname = window.location.pathname + '?ended=true'
+                }
                 $(this).text(event.strftime('%M:%S'));
             })
 
