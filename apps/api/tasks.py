@@ -23,12 +23,9 @@ def check_transactions():
     """
     ids = cache.get('payment_status_queue', [])
 
-    # exclude confirmed transactions from the queue and resave it
-    confirmed = Transaction.objects\
-        .filter(status=Transaction.STATUS_CONFIRMED, id__in=ids)\
+    unconfirmed = Transaction.objects\
+        .exclude(status=Transaction.STATUS_CONFIRMED)\
         .values_list('id', flat=True)
-    unconfirmed = [id for id in ids if id not in confirmed]
-    cache.set('payment_status_queue', unconfirmed, 60 * 60 * 24)
 
     # Due to blockonomics limitations we take only first 50 transactions
     transactions = Transaction.objects.filter(id__in=ids)[:50]
