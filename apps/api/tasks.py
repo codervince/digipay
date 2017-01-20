@@ -28,6 +28,6 @@ def check_transactions():
         .values_list('id', flat=True)
 
     # Due to blockonomics limitations we take only first 50 transactions
-    transactions = Transaction.objects.filter(id__in=ids)[:50]
+    transactions = Transaction.objects.filter(id__in=unconfirmed)[:50]
     if transactions:
         checks(transactions)
