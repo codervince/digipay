@@ -60,7 +60,7 @@ def blockchain_set_tx_detail(transaction):
     transaction.amount_paid = round(info['total_received'] * SATOSHI, 8)
 
     if transaction.amount_paid >= transaction.amount_btc:
-        transaction = Transaction.STATUS_CONFIRMED
+        transaction.status = Transaction.STATUS_CONFIRMED
 
     transaction.save()
 
