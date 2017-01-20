@@ -12,19 +12,22 @@ def send_receipt(transaction_id):
     """Send receipt
     """
     transaction = Transaction.objects.get(id=transaction_id)
-    context = {
-        'transaction': transaction,
-    }
-    html_content = render_to_string('receipt.html', context)
-    text_content = render_to_string('receipt.txt', context)
-    msg = EmailMultiAlternatives(
-        ugettext('Receipt'),  # subject
-        text_content,  # text message
-        settings.DEFAULT_FROM_EMAIL,  # from
-        [transaction.email]  # to
-    )
-    msg.attach_alternative(html_content, 'text/html')
-    msg.send(fail_silently=False)
+    if not transaction.is_emailed:
+        context = {
+            'transaction': transaction,
+        }
+        html_content = render_to_string('receipt.html', context)
+        text_content = render_to_string('receipt.txt', context)
+        msg = EmailMultiAlternatives(
+            ugettext('Receipt'),  # subject
+            text_content,  # text message
+            settings.DEFAULT_FROM_EMAIL,  # from
+            [transaction.email]  # to
+        )
+        msg.attach_alternative(html_content, 'text/html')
+        msg.send(fail_silently=False)
+        transaction.is_emailed = True
+        transaction.save()
 
 
 @app.task

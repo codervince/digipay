@@ -70,6 +70,7 @@ class Transaction(BaseModel):
     status = models.IntegerField(choices=STATUS_CHOICES,
                                  default=STATUS_INITIATED, null=True,
                                  editable=False)
+    is_emailed = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
         return '{0}'.format(self.id.hex)
