@@ -142,8 +142,8 @@ SITE_ID = 1
 ADMIN_SITE_HEADER = 'Payment Gateway'
 
 # Minutes
-TIMER = 999
-EXTRA_TIME = 15
+TIMER = 15
+EXTRA_TIME = 60 * 8
 HOLD_TIMEOUT = 999
 
 handler404 = 'core.views.not_found'
