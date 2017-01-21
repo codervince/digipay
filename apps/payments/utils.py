@@ -51,6 +51,9 @@ def set_tx_details(history_data, transaction):
     transaction.amount_paid = amount
     transaction.save()
 
+    if transaction.status != Transaction.STATUS_CONFIRMED:
+        blockchain_set_tx_detail(transaction)
+
 
 def blockchain_set_tx_detail(transaction):
     """Check transaction detals and save updates using blockchain.info API"""
