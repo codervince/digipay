@@ -102,7 +102,6 @@ class TransactionAPIView(CSRFExemptMixin, View):
                 email=data['email'],
                 project_code=data['project_code'],
                 amount_usd=data['amount_usd'],
-                webhook=data.get('webhook'),
             )
             transaction.save()
             eta = lambda x: transaction.ends_at() + datetime.timedelta(minutes=x)
