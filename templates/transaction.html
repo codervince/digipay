@@ -25,7 +25,7 @@
                                 <label for="" class="col-4 col-form-label">{% trans "Amount to pay:" %}</label>
                                 <div class="col-8">
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                        <input type="text" name="{{ form.amount_usd.html_name }}" value="{{ transaction.amount_usd }}" class="form-control usd">
+                                        <input type="text" name="{{ form.amount_usd.html_name }}" value="{{ transaction.amount_usd|default_if_none:"0" }}" class="form-control usd">
                                         <div class="input-group-addon">USD</div>
                                     </div>
                                 </div>
