@@ -52,6 +52,7 @@ request is a POST
     "token": "...",
     "project_code": "...",
     "amount_btc": 100.00,
+    "amount_usd": 100.00,
     "email": "john@example.com"
 }
 ```

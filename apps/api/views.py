@@ -31,6 +31,7 @@ class TransactionAPIView(CSRFExemptMixin, View):
         "token": "...",
         "project_code": "...",
         "amount_btc": 10.12,
+        "amount_usd": 10.12,
         "email": "..."
     }
     Response:
@@ -67,6 +68,9 @@ class TransactionAPIView(CSRFExemptMixin, View):
 
         if not data.get('amount_btc'):
             error(_('amount_btc is required'))
+        
+        if not data.get('amount_usd'):
+            error(_('amount_usd is required'))
 
         if data.get('project_code') and data.get('email'):
             code = data.get('project_code')
@@ -107,6 +111,7 @@ class TransactionAPIView(CSRFExemptMixin, View):
                 email=data['email'],
                 project_code=data['project_code'],
                 amount_btc=data['amount_btc'],
+                amount_usd=data['amount_usd'],
             )
             transaction.save()
             eta = lambda x: transaction.ends_at() + datetime.timedelta(minutes=x)
