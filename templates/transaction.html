@@ -118,7 +118,7 @@
                   if (this.status >= 200 && this.status < 400) {
                     var data = JSON.parse(this.response);
                     var rawRate = usd.val()/data.rate
-                    if (usd.val() == 0) {
+                    if (usd.val() === "0") {
                         usd.val(btc.prop("defaultValue") * data.rate)
                         btc.val(btc.prop("defaultValue"))
                     }
