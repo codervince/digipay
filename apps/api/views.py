@@ -88,7 +88,9 @@ class TransactionAPIView(CSRFExemptMixin, View):
         try:
             data = self.get_data()
         except:
-            return JsonResponse({'errors': "wrong request body. It must be json"})
+            return JsonResponse(
+                    {'errors': "wrong request body. It must be json"},
+                    status=400)
 
         errors, is_verified = self.verify(data)
 
@@ -159,7 +161,7 @@ class TransactionAPIView(CSRFExemptMixin, View):
                 url=transaction.get_absolute_url()
             )
             return JsonResponse({"url": url})
-        return JsonResponse(errors)
+        return JsonResponse(errors, status=400)
 
 
 class CallbackAPIView(CSRFExemptMixin, View):
