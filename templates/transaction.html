@@ -120,6 +120,7 @@
                     var rawRate = usd.val()/data.rate
                     if (usd.val() == 0) {
                         usd.val(btc.prop("defaultValue") * data.rate)
+                        btc.val(btc.prop("defaultValue"))
                     }
                     btc.val(rawRate.toFixed(DECIMAL_PLACES))
                     btcExact.html(rawRate.toFixed(DECIMAL_PLACES))
