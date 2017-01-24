@@ -85,7 +85,10 @@ class TransactionAPIView(CSRFExemptMixin, View):
     def post(self, request, *args, **kwargs):
         """Create transaction
         """
-        data = self.get_data()
+        try:
+            data = self.get_data()
+        except:
+            return JsonResponse({'errors': "wrong request body. It must be json"})
 
         errors, is_verified = self.verify(data)
 
