@@ -25,7 +25,7 @@
                                 <label for="" class="col-4 col-form-label">{% trans "Amount to pay:" %}</label>
                                 <div class="col-8">
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                        <input type="text" name="{{ form.amount_usd.html_name }}" value="{{ transaction.amount_usd|default_if_none:"0" }}" class="form-control usd">
+                                        <input type="number" name="{{ form.amount_usd.html_name }}" value="{{ transaction.amount_usd|default_if_none:"0" }}" class="form-control usd">
                                         <div class="input-group-addon">USD</div>
                                     </div>
                                 </div>
@@ -34,7 +34,7 @@
                                 <label for="" class="col-4 col-form-label"></label>
                                 <div class="col-8">
                                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                        <input type="text" name="btc" value="{{ transaction.amount_btc|default_if_none:"" }}" class="form-control btc" disabled>
+                                        <input type="number" name="btc" value="{{ transaction.amount_btc|default_if_none:"" }}" class="form-control btc" disabled>
                                         <div class="input-group-addon">BTC</div>
                                     </div>
                                 </div>
@@ -118,6 +118,9 @@
                   if (this.status >= 200 && this.status < 400) {
                     var data = JSON.parse(this.response);
                     var rawRate = usd.val()/data.rate
+                    if (usd.val() == 0) {
+                        usd.val(btc.prop("defaultValue") * data.rate)
+                    }
                     btc.val(rawRate.toFixed(DECIMAL_PLACES))
                     btcExact.html(rawRate.toFixed(DECIMAL_PLACES))
                     qr.html('<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ transaction.qr_schema|urlencode }}'+ rawRate.toFixed(DECIMAL_PLACES) +'">')
