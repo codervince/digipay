@@ -185,7 +185,7 @@ class CallbackAPIView(CSRFExemptMixin, View):
 
     def form_valid(self, form):
         data = form.cleaned_data
-        if data['secret'] != '45c75bd587ab4a5b94163c7c741c1dec':
+        if data['secret'] != settings.SECRET:
             return HttpResponse(status=400)
 
         try:
@@ -266,3 +266,35 @@ class PaymentStatusAPIView(View):
         return JsonResponse({
             "message": message
         })
+
+
+class TransactionsLatestAPIView(View):
+    """Returns the latest confirmed transactions for the last
+    settings.LATEST_TX_NU minutes
+    """
+
+    def prepare(self, tx):
+        """Prepare data per transaction
+        """
+        return {
+            'project_code': tx.project_code,
+            'email': tx.email,
+            'status': tx.get_status_display(),
+            'transaction_id': tx.id.hex,
+            'txid': tx.txid
+        }
+
+    def get(self, request, *args, **kwargs):
+        secret = request.GET.get('secret')
+        if any([not secret, secret != settings.SECRET]):
+            return Http404()
+
+        gte = timezone.now() - datetime.timedelta(
+            minutes=settings.LATEST_TX_NU)
+        transactions = Transaction.objects\
+                .filter(updated_at__gte=gte,
+                        status=Transaction.STATUS_CONFIRMED)
+        data = {
+            'transactions': [self.prepare(tx) for tx in transactions]
+        }
+        return JsonResponse(data)

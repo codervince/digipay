@@ -145,6 +145,8 @@ ADMIN_SITE_HEADER = 'Payment Gateway'
 TIMER = 15
 EXTRA_TIME = 60
 HOLD_TIMEOUT = 999
+LATEST_TX_NU = 999
+SECRET = '45c75bd587ab4a5b94163c7c741c1dec'
 
 handler404 = 'core.views.not_found'
 
