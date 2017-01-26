@@ -289,10 +289,10 @@ class TransactionsLatestAPIView(View):
         if any([not secret, secret != settings.SECRET]):
             return JsonResponse(status=400)
 
-        lte = timezone.now() - datetime.timedelta(
+        gte = timezone.now() - datetime.timedelta(
             minutes=settings.LATEST_TX_NU)
         transactions = Transaction.objects\
-                .filter(updated_at__lte=lte,
+                .filter(updated_at__gte=gte,
                         status=Transaction.STATUS_CONFIRMED)
         data = {
             'transactions': [self.prepare(tx) for tx in transactions]
