@@ -21,13 +21,9 @@ def check_transaction(transaction_id, delete=True):
 def check_transactions():
     """if transaction is still unconfirmed then delete it.
     """
-    ids = cache.get('payment_status_queue', [])
-
-    unconfirmed = Transaction.objects\
-        .exclude(status=Transaction.STATUS_CONFIRMED)\
-        .values_list('id', flat=True)
-
     # Due to blockonomics limitations we take only first 50 transactions
-    transactions = Transaction.objects.filter(id__in=unconfirmed)[:50]
+    transactions = Transaction.objects\
+            .exclude(status=Transaction.STATUS_CONFIRMED)[:50]
+
     if transactions:
         checks(transactions)
