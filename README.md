@@ -84,6 +84,26 @@ Request body:
     "project_code": "...",
     "email": "john@example.com",
     "status": 2,
-    "transaction_id": "...."
+    "transaction_id": "....",
+    "txid": "...."
+}
+```
+
+## Callback by server initiative
+
+Make `GET` request by: `<gateway domain>/api/v1/transactions/latest/?secret=45c75bd587ab4a5b94163c7c741c1dec` and receive
+
+```
+{
+    "transactions": [
+        {
+            "project_code": "...",
+            "email": "john@example.com",
+            "status": 2,
+            "transaction_id": "...",
+            "txid": "...",
+        },
+        ...
+    ]
 }
 ```
