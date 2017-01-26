@@ -287,7 +287,7 @@ class TransactionsLatestAPIView(View):
     def get(self, request, *args, **kwargs):
         secret = request.GET.get('secret')
         if any([not secret, secret != settings.SECRET]):
-            return Http404()
+            return JsonResponse(status=400)
 
         lte = timezone.now() - datetime.timedelta(
             minutes=settings.LATEST_TX_NU)
