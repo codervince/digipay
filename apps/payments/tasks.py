@@ -42,4 +42,5 @@ def send_webhook(transaction_id):
         'transaction_id': transaction.id.hex,
         'txid': transaction.txid
     }
-    requests.post(transaction.site.site_ext.callback_url, data=data)
+    if transaction.site.site_ext.callback_url:
+        requests.post(transaction.site.site_ext.callback_url, data=data)
