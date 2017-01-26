@@ -252,10 +252,10 @@ class PaymentStatusAPIView(View):
             return JsonResponse({'message': ""})
 
         # Add to the queue
-        queue = cache.get('payment_status_queue', set([]))
-        if not queue:
-            queue = set([id])
-        cache.set('payment_status_queue', queue, 60 * 60 * 24)
+        # queue = cache.get('payment_status_queue', set([]))
+        # if not queue:
+        #     queue = set([id])
+        # cache.set('payment_status_queue', queue, 60 * 60 * 24)
 
         # We don't make calls to the API due to API limit on 2 req/minute
         transaction = Transaction.objects.get(id=id)
