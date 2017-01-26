@@ -40,8 +40,6 @@ def set_tx_details(history_data, transaction):
             amount = value * SATOSHI
             amount = round(amount, 8)
 
-    if transaction.status != mapping[status]:
-        send_webhook.apply_async(kwargs={'transaction_id': transaction.id})
 
     if mapping[status] == Transaction.STATUS_CONFIRMED:
         send_receipt.apply_async(kwargs={'transaction_id': transaction.id})
@@ -50,8 +48,10 @@ def set_tx_details(history_data, transaction):
     transaction.status = mapping[status]
     transaction.amount_paid = amount
     transaction.save()
-
-    if transaction.status != Transaction.STATUS_CONFIRMED:
+    
+    if transaction.status == Transaction.STATUS_CONFIRMED:
+        send_webhook.apply_async(kwargs={'transaction_id': transaction.id})
+    else:
         blockchain_set_tx_detail(transaction)
 
 
@@ -68,6 +68,7 @@ def blockchain_set_tx_detail(transaction):
 
     if transaction.amount_paid >= transaction.amount_btc:
         transaction.status = Transaction.STATUS_CONFIRMED
+        send_webhook.apply_async(kwargs={'transaction_id': transaction.id})
 
     transaction.save()
 
