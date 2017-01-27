@@ -284,18 +284,40 @@ class TransactionsLatestAPIView(View):
             'txid': tx.txid
         }
 
-    def get(self, request, *args, **kwargs):
-        secret = request.GET.get('secret')
+    def is_authenticated(self):
+        secret = self.request.GET.get('secret')
         if any([not secret, secret != settings.SECRET]):
+            return False
+        return True
+
+    def get_transactions(self, token):
+        gte = timezone.now() - datetime.timedelta(
+            minutes=settings.LATEST_TX_NU)
+
+        params = {
+            'updated_at__gte': gte,
+            'status': Transaction.STATUS_CONFIRMED,
+            'site__site_ext__token': token
+        }
+
+        return Transaction.objects.filter(**params)
+
+    def get(self, request, *args, **kwargs):
+        if not is_authenticated():
             return JsonResponse(data={
                 "error": _("Invalid secret key")
             }, status=400)
 
-        gte = timezone.now() - datetime.timedelta(
-            minutes=settings.LATEST_TX_NU)
-        transactions = Transaction.objects\
-                .filter(updated_at__gte=gte,
-                        status=Transaction.STATUS_CONFIRMED)
+        try:
+            token = uuid.UUID(self.request.GET.get('token'))
+        except:
+            return JsonResponse(data={
+                "error": "Invalid token supplied"}, status=400)
+        if not SiteExt.objects.filter(token=token).count():
+            return JsonResponse(data={
+                "error": "There is no valid token"}, status=400)
+
+        transactions = self.get_transactions(token)
         data = {
             'transactions': [self.prepare(tx) for tx in transactions]
         }
