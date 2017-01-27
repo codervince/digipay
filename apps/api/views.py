@@ -303,7 +303,7 @@ class TransactionsLatestAPIView(View):
         return Transaction.objects.filter(**params)
 
     def get(self, request, *args, **kwargs):
-        if not is_authenticated():
+        if not self.is_authenticated():
             return JsonResponse(data={
                 "error": _("Invalid secret key")
             }, status=400)
