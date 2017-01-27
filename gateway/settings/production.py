@@ -3,9 +3,7 @@ from .base import *
 
 DEBUG = False
 
-# TODO
-# ALLOWED_HOSTS = [
-# ]
+ALLOWED_HOSTS = ['138.68.90.116']
 
 RAVEN_CONFIG = {
     'dsn': os.environ['DSN'],
